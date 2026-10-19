@@ -41,7 +41,7 @@ Most of its sensors are disabled by default: open the **System Monitor** device 
 
 | Card section | Sensors to enable |
 |---|---|
-| System | Processor use, Memory usage (or Memory use + Memory free), Disk usage / Disk use + Disk free, Processor temperature, Last boot, Load (1m/5m/15m), IPv4 address |
+| System | Processor use, Memory usage (or Memory use + Memory free), Disk usage / Disk use + Disk free, Processor temperature, Uptime (Last boot on older versions), Load (1m/5m/15m), IPv4 address |
 | Network | Network throughput in / out, Network in / out (totals) |
 | Storage | Disk use + Disk free for each mount point, Swap use + Swap free |
 | Processes | Process binary sensors (configured in the integration options) |

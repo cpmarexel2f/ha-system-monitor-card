@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.1
+
+### 🐛 Fixes
+
+- Uptime was missing on recent Home Assistant versions, where the System Monitor "Last boot" sensor is now called "Uptime" (new translation key and `uptime` device class). Both forms are now recognized.
+
 ## 1.0.0
 
 First release of the System Monitor cards for Home Assistant, built for the core [System Monitor integration](https://www.home-assistant.io/integrations/systemmonitor/).

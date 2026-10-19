@@ -8,7 +8,7 @@
  * registry (platform "systemmonitor" and translation key), whatever the language.
  */
 
-const VERSION = "1.0.0";
+const VERSION = "1.0.1";
 const IMG_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cGF0aCBmaWxsPSIjRjJGNEY5IiBkPSJNMjQwIDIyNC44MTNDMjQwIDIzMy4wNjMgMjMzLjI1IDIzOS44MTMgMjI1IDIzOS44MTNIMTVDNi43NSAyMzkuODEzIDAgMjMzLjA2MyAwIDIyNC44MTNWMTM0LjgxM0MwIDEyNi41NjMgNC43NyAxMTUuMDQzIDEwLjYxIDEwOS4yMDNMMTA5LjM5IDEwLjQyM0MxMTUuMjIgNC41OTMwNCAxMjQuNzcgNC41OTMwNCAxMzAuNiAxMC40MjNMMjI5LjM5IDEwOS4yMTNDMjM1LjIyIDExNS4wNDMgMjQwIDEyNi41NzMgMjQwIDEzNC44MjNWMjI0LjgyM1YyMjQuODEzWiIvPjxwYXRoIGZpbGw9IiMxOEJDRjIiIGQ9Ik0yMjkuMzkgMTA5LjIwM0wxMzAuNjEgMTAuNDIzQzEyNC43OCA0LjU5MzA0IDExNS4yMyA0LjU5MzA0IDEwOS40IDEwLjQyM0wxMC42MSAxMDkuMjAzQzQuNzggMTE1LjAzMyAwIDEyNi41NjMgMCAxMzQuODEzVjIyNC44MTNDMCAyMzMuMDYzIDYuNzUgMjM5LjgxMyAxNSAyMzkuODEzSDEwNy4yN0w2Ni42NCAxOTkuMTgzQzY0LjU1IDE5OS45MDMgNjIuMzIgMjAwLjMxMyA2MCAyMDAuMzEzQzQ4LjcgMjAwLjMxMyAzOS41IDE5MS4xMTMgMzkuNSAxNzkuODEzQzM5LjUgMTY4LjUxMyA0OC43IDE1OS4zMTMgNjAgMTU5LjMxM0M3MS4zIDE1OS4zMTMgODAuNSAxNjguNTEzIDgwLjUgMTc5LjgxM0M4MC41IDE4Mi4xNDMgODAuMDkgMTg0LjM3MyA3OS4zNyAxODYuNDYzTDExMSAyMTguMDkzVjEwMi4yMTNDMTA0LjIgOTguODczIDk5LjUgOTEuODkzIDk5LjUgODMuODIzQzk5LjUgNzIuNTIzIDEwOC43IDYzLjMyMyAxMjAgNjMuMzIzQzEzMS4zIDYzLjMyMyAxNDAuNSA3Mi41MjMgMTQwLjUgODMuODIzQzE0MC41IDkxLjg5MyAxMzUuOCA5OC44NzMgMTI5IDEwMi4yMTNWMTgzLjQ4M0wxNjAuNDYgMTUyLjAyM0MxNTkuODQgMTUwLjA2MyAxNTkuNSAxNDcuOTgzIDE1OS41IDE0NS44MjNDMTU5LjUgMTM0LjUyMyAxNjguNyAxMjUuMzIzIDE4MCAxMjUuMzIzQzE5MS4zIDEyNS4zMjMgMjAwLjUgMTM0LjUyMyAyMDAuNSAxNDUuODIzQzIwMC41IDE1Ny4xMjMgMTkxLjMgMTY2LjMyMyAxODAgMTY2LjMyM0MxNzcuNSAxNjYuMzIzIDE3NS4xMiAxNjUuODUzIDE3Mi45MSAxNjUuMDMzTDEyOSAyMDguOTQzVjIzOS44MjNIMjI1QzIzMy4yNSAyMzkuODIzIDI0MCAyMzMuMDczIDI0MCAyMjQuODIzVjEzNC44MjNDMjQwIDEyNi41NzMgMjM1LjIzIDExNS4wNTMgMjI5LjM5IDEwOS4yMTNWMTA5LjIwM1oiLz48L3N2Zz4K";
 
 const ICONS = {
@@ -171,9 +171,11 @@ const fmtUptime = (sec, hass, config) => {
   return `${m} ${t(hass, config, "minutes")}`;
 };
 
-/** Seconds since the "Last boot" timestamp sensor. */
+/** Seconds since the "Last boot" / "Uptime" sensor (a boot timestamp, or a duration). */
+const DURATION_FACTORS = { s: 1, min: 60, h: 3600, d: 86400 };
 const uptimeSec = (s) => {
   if (!s) return null;
+  if (/^\d+(\.\d+)?$/.test(s.state)) return parseFloat(s.state) * (DURATION_FACTORS[s.attributes.unit_of_measurement] ?? 1);
   const boot = Date.parse(s.state);
   return Number.isFinite(boot) ? Math.max(0, (Date.now() - boot) / 1000) : null;
 };
@@ -218,6 +220,8 @@ const SCALAR_KEYS = [
   "load_15m",
   "last_boot",
 ];
+// Recent Home Assistant versions renamed the "Last boot" sensor to "Uptime".
+const ALIASES = { uptime: "last_boot" };
 
 // Fallback when the entity registry is not available: English entity ids
 // (sensor.system_monitor_<name>), as created on an English install.
@@ -244,7 +248,7 @@ const FALLBACK = [
   ["load_1m", /^load_1m$/],
   ["load_5m", /^load_5m$/],
   ["load_15m", /^load_15m$/],
-  ["last_boot", /^last_boot$/],
+  ["last_boot", /^(?:last_boot|uptime)$/],
   ["process", /^process_(.+)$/],
 ];
 
@@ -277,7 +281,10 @@ const discover = (hass) => {
   if (registry.length) {
     for (const e of registry.sort((a, b) => a.entity_id.localeCompare(b.entity_id))) {
       if (e.hidden || !hass.states[e.entity_id] || !e.translation_key) continue;
-      if (ARG_KEYS[e.translation_key] || SCALAR_KEYS.includes(e.translation_key)) add(e.translation_key, null, e.entity_id);
+      const key = ALIASES[e.translation_key] || e.translation_key;
+      if (ARG_KEYS[key] || SCALAR_KEYS.includes(key)) add(key, null, e.entity_id);
+      // Unknown key with a boot time / uptime device class: the uptime sensor, whatever its key.
+      else if (["timestamp", "uptime"].includes(hass.states[e.entity_id].attributes.device_class)) add("last_boot", null, e.entity_id);
     }
   } else {
     for (const id of Object.keys(hass.states).sort()) {

@@ -14,7 +14,7 @@ const raw = [
   ["load_1m", "load_1m", "0.42", {}],
   ["load_5m", "load_5m", "0.37", {}],
   ["load_15m", "load_15m", "0.31", {}],
-  ["last_boot", "last_boot", boot, { device_class: "timestamp" }],
+  ["uptime", "uptime", boot, { device_class: "uptime" }],
   ["disk_use", "disk_use", "37.1", { unit_of_measurement: "GiB", device_class: "data_size" }, "/"],
   ["disk_free", "disk_free", "72.6", { unit_of_measurement: "GiB", device_class: "data_size" }, "/"],
   ["disk_use_media", "disk_use", "512.3", { unit_of_measurement: "GiB", device_class: "data_size" }, "/media"],
@@ -35,7 +35,7 @@ const raw = [
 const NAMES = {
   processor_use: "Processor use", processor_temperature: "Processor temperature", memory_use_percent: "Memory usage",
   memory_use: "Memory use", memory_free: "Memory free", swap_use: "Swap use", swap_free: "Swap free",
-  load_1m: "Load (1m)", load_5m: "Load (5m)", load_15m: "Load (15m)", last_boot: "Last boot",
+  load_1m: "Load (1m)", load_5m: "Load (5m)", load_15m: "Load (15m)", uptime: "Uptime",
   disk_use: "Disk use", disk_free: "Disk free", ipv4_address: "IPv4 address", network_in: "Network in",
   network_out: "Network out", throughput_network_in: "Network throughput in", throughput_network_out: "Network throughput out",
   process: "Process",

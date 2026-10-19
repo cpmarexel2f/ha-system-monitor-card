@@ -171,9 +171,11 @@ const fmtUptime = (sec, hass, config) => {
   return `${m} ${t(hass, config, "minutes")}`;
 };
 
-/** Seconds since the "Last boot" timestamp sensor. */
+/** Seconds since the "Last boot" / "Uptime" sensor (a boot timestamp, or a duration). */
+const DURATION_FACTORS = { s: 1, min: 60, h: 3600, d: 86400 };
 const uptimeSec = (s) => {
   if (!s) return null;
+  if (/^\d+(\.\d+)?$/.test(s.state)) return parseFloat(s.state) * (DURATION_FACTORS[s.attributes.unit_of_measurement] ?? 1);
   const boot = Date.parse(s.state);
   return Number.isFinite(boot) ? Math.max(0, (Date.now() - boot) / 1000) : null;
 };
@@ -218,6 +220,8 @@ const SCALAR_KEYS = [
   "load_15m",
   "last_boot",
 ];
+// Recent Home Assistant versions renamed the "Last boot" sensor to "Uptime".
+const ALIASES = { uptime: "last_boot" };
 
 // Fallback when the entity registry is not available: English entity ids
 // (sensor.system_monitor_<name>), as created on an English install.
@@ -244,7 +248,7 @@ const FALLBACK = [
   ["load_1m", /^load_1m$/],
   ["load_5m", /^load_5m$/],
   ["load_15m", /^load_15m$/],
-  ["last_boot", /^last_boot$/],
+  ["last_boot", /^(?:last_boot|uptime)$/],
   ["process", /^process_(.+)$/],
 ];
 
@@ -277,7 +281,10 @@ const discover = (hass) => {
   if (registry.length) {
     for (const e of registry.sort((a, b) => a.entity_id.localeCompare(b.entity_id))) {
       if (e.hidden || !hass.states[e.entity_id] || !e.translation_key) continue;
-      if (ARG_KEYS[e.translation_key] || SCALAR_KEYS.includes(e.translation_key)) add(e.translation_key, null, e.entity_id);
+      const key = ALIASES[e.translation_key] || e.translation_key;
+      if (ARG_KEYS[key] || SCALAR_KEYS.includes(key)) add(key, null, e.entity_id);
+      // Unknown key with a boot time / uptime device class: the uptime sensor, whatever its key.
+      else if (["timestamp", "uptime"].includes(hass.states[e.entity_id].attributes.device_class)) add("last_boot", null, e.entity_id);
     }
   } else {
     for (const id of Object.keys(hass.states).sort()) {
