@@ -220,7 +220,7 @@ const SCALAR_KEYS = [
   "load_15m",
   "last_boot",
 ];
-// Recent Home Assistant versions renamed the "Last boot" sensor to "Uptime".
+// Alternative translation keys of the same sensors.
 const ALIASES = { uptime: "last_boot" };
 
 // Fallback when the entity registry is not available: English entity ids
@@ -280,11 +280,11 @@ const discover = (hass) => {
   const registry = hass.entities ? Object.values(hass.entities).filter((e) => e.platform === "systemmonitor") : [];
   if (registry.length) {
     for (const e of registry.sort((a, b) => a.entity_id.localeCompare(b.entity_id))) {
-      if (e.hidden || !hass.states[e.entity_id] || !e.translation_key) continue;
+      if (e.hidden || !hass.states[e.entity_id]) continue;
       const key = ALIASES[e.translation_key] || e.translation_key;
       if (ARG_KEYS[key] || SCALAR_KEYS.includes(key)) add(key, null, e.entity_id);
-      // Unknown key with a boot time / uptime device class: the uptime sensor, whatever its key.
-      else if (["timestamp", "uptime"].includes(hass.states[e.entity_id].attributes.device_class)) add("last_boot", null, e.entity_id);
+      // The "Last boot" sensor has no translation key (it is named after its "uptime" device class).
+      else if (!e.translation_key && hass.states[e.entity_id].attributes.device_class === "uptime") add("last_boot", null, e.entity_id);
     }
   } else {
     for (const id of Object.keys(hass.states).sort()) {

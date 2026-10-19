@@ -8,7 +8,7 @@
  * registry (platform "systemmonitor" and translation key), whatever the language.
  */
 
-const VERSION = "1.0.1";
+const VERSION = "1.0.2";
 const IMG_LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNDAgMjQwIj48cGF0aCBmaWxsPSIjRjJGNEY5IiBkPSJNMjQwIDIyNC44MTNDMjQwIDIzMy4wNjMgMjMzLjI1IDIzOS44MTMgMjI1IDIzOS44MTNIMTVDNi43NSAyMzkuODEzIDAgMjMzLjA2MyAwIDIyNC44MTNWMTM0LjgxM0MwIDEyNi41NjMgNC43NyAxMTUuMDQzIDEwLjYxIDEwOS4yMDNMMTA5LjM5IDEwLjQyM0MxMTUuMjIgNC41OTMwNCAxMjQuNzcgNC41OTMwNCAxMzAuNiAxMC40MjNMMjI5LjM5IDEwOS4yMTNDMjM1LjIyIDExNS4wNDMgMjQwIDEyNi41NzMgMjQwIDEzNC44MjNWMjI0LjgyM1YyMjQuODEzWiIvPjxwYXRoIGZpbGw9IiMxOEJDRjIiIGQ9Ik0yMjkuMzkgMTA5LjIwM0wxMzAuNjEgMTAuNDIzQzEyNC43OCA0LjU5MzA0IDExNS4yMyA0LjU5MzA0IDEwOS40IDEwLjQyM0wxMC42MSAxMDkuMjAzQzQuNzggMTE1LjAzMyAwIDEyNi41NjMgMCAxMzQuODEzVjIyNC44MTNDMCAyMzMuMDYzIDYuNzUgMjM5LjgxMyAxNSAyMzkuODEzSDEwNy4yN0w2Ni42NCAxOTkuMTgzQzY0LjU1IDE5OS45MDMgNjIuMzIgMjAwLjMxMyA2MCAyMDAuMzEzQzQ4LjcgMjAwLjMxMyAzOS41IDE5MS4xMTMgMzkuNSAxNzkuODEzQzM5LjUgMTY4LjUxMyA0OC43IDE1OS4zMTMgNjAgMTU5LjMxM0M3MS4zIDE1OS4zMTMgODAuNSAxNjguNTEzIDgwLjUgMTc5LjgxM0M4MC41IDE4Mi4xNDMgODAuMDkgMTg0LjM3MyA3OS4zNyAxODYuNDYzTDExMSAyMTguMDkzVjEwMi4yMTNDMTA0LjIgOTguODczIDk5LjUgOTEuODkzIDk5LjUgODMuODIzQzk5LjUgNzIuNTIzIDEwOC43IDYzLjMyMyAxMjAgNjMuMzIzQzEzMS4zIDYzLjMyMyAxNDAuNSA3Mi41MjMgMTQwLjUgODMuODIzQzE0MC41IDkxLjg5MyAxMzUuOCA5OC44NzMgMTI5IDEwMi4yMTNWMTgzLjQ4M0wxNjAuNDYgMTUyLjAyM0MxNTkuODQgMTUwLjA2MyAxNTkuNSAxNDcuOTgzIDE1OS41IDE0NS44MjNDMTU5LjUgMTM0LjUyMyAxNjguNyAxMjUuMzIzIDE4MCAxMjUuMzIzQzE5MS4zIDEyNS4zMjMgMjAwLjUgMTM0LjUyMyAyMDAuNSAxNDUuODIzQzIwMC41IDE1Ny4xMjMgMTkxLjMgMTY2LjMyMyAxODAgMTY2LjMyM0MxNzcuNSAxNjYuMzIzIDE3NS4xMiAxNjUuODUzIDE3Mi45MSAxNjUuMDMzTDEyOSAyMDguOTQzVjIzOS44MjNIMjI1QzIzMy4yNSAyMzkuODIzIDI0MCAyMzMuMDczIDI0MCAyMjQuODIzVjEzNC44MjNDMjQwIDEyNi41NzMgMjM1LjIzIDExNS4wNTMgMjI5LjM5IDEwOS4yMTNWMTA5LjIwM1oiLz48L3N2Zz4K";
 
 const ICONS = {
@@ -220,7 +220,7 @@ const SCALAR_KEYS = [
   "load_15m",
   "last_boot",
 ];
-// Recent Home Assistant versions renamed the "Last boot" sensor to "Uptime".
+// Alternative translation keys of the same sensors.
 const ALIASES = { uptime: "last_boot" };
 
 // Fallback when the entity registry is not available: English entity ids
@@ -280,11 +280,11 @@ const discover = (hass) => {
   const registry = hass.entities ? Object.values(hass.entities).filter((e) => e.platform === "systemmonitor") : [];
   if (registry.length) {
     for (const e of registry.sort((a, b) => a.entity_id.localeCompare(b.entity_id))) {
-      if (e.hidden || !hass.states[e.entity_id] || !e.translation_key) continue;
+      if (e.hidden || !hass.states[e.entity_id]) continue;
       const key = ALIASES[e.translation_key] || e.translation_key;
       if (ARG_KEYS[key] || SCALAR_KEYS.includes(key)) add(key, null, e.entity_id);
-      // Unknown key with a boot time / uptime device class: the uptime sensor, whatever its key.
-      else if (["timestamp", "uptime"].includes(hass.states[e.entity_id].attributes.device_class)) add("last_boot", null, e.entity_id);
+      // The "Last boot" sensor has no translation key (it is named after its "uptime" device class).
+      else if (!e.translation_key && hass.states[e.entity_id].attributes.device_class === "uptime") add("last_boot", null, e.entity_id);
     }
   } else {
     for (const id of Object.keys(hass.states).sort()) {

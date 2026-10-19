@@ -14,7 +14,7 @@ const raw = [
   ["load_1m", "load_1m", "0.42", {}],
   ["load_5m", "load_5m", "0.37", {}],
   ["load_15m", "load_15m", "0.31", {}],
-  ["uptime", "uptime", boot, { device_class: "uptime" }],
+  ["last_boot", null, boot, { device_class: "uptime" }],
   ["disk_use", "disk_use", "37.1", { unit_of_measurement: "GiB", device_class: "data_size" }, "/"],
   ["disk_free", "disk_free", "72.6", { unit_of_measurement: "GiB", device_class: "data_size" }, "/"],
   ["disk_use_media", "disk_use", "512.3", { unit_of_measurement: "GiB", device_class: "data_size" }, "/media"],
@@ -45,9 +45,10 @@ export const states = {};
 export const entities = {};
 for (const [obj, key, state, attributes, arg] of raw) {
   const id = `${key === "process" ? "binary_sensor" : "sensor"}.system_monitor_${obj}`;
-  const friendly_name = `System Monitor ${NAMES[key]}${arg ? ` ${arg}` : ""}`;
+  const friendly_name = `System Monitor ${NAMES[key || "uptime"]}${arg ? ` ${arg}` : ""}`;
   states[id] = { entity_id: id, state, attributes: { ...attributes, friendly_name } };
-  entities[id] = { entity_id: id, platform: "systemmonitor", translation_key: key };
+  // Like Home Assistant, the "Last boot" sensor has no translation key.
+  entities[id] = { entity_id: id, platform: "systemmonitor", ...(key ? { translation_key: key } : {}) };
 }
 for (const [id, installed] of [
   ["update.home_assistant_core_update", "2026.10.2"],

@@ -1,10 +1,16 @@
 # Changelog
 
+## 1.0.2
+
+### 🐛 Fixes
+
+- Uptime is now displayed: the System Monitor "Last boot" sensor has no translation key (it is named after its `uptime` device class, e.g. "Temps de fonctionnement" in French), so it was skipped by the entity discovery.
+
 ## 1.0.1
 
 ### 🐛 Fixes
 
-- Uptime was missing on recent Home Assistant versions, where the System Monitor "Last boot" sensor is now called "Uptime" (new translation key and `uptime` device class). Both forms are now recognized.
+- Recognize an `uptime` translation key for the System Monitor "Last boot" sensor.
 
 ## 1.0.0
 
