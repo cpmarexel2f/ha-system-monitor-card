@@ -1,0 +1,16 @@
+{
+  "name": "ha-system-monitor-card",
+  "version": "1.0.0",
+  "description": "Lovelace cards for Home Assistant to monitor the machine running Home Assistant (System Monitor integration).",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "node scripts/build.mjs --check && node --check dist/system-monitor-card.js",
+    "screenshots": "node scripts/screenshots.mjs"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.56.1"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "System Monitor Card",
+  "render_readme": true,
+  "content_in_root": false,
+  "filename": "system-monitor-card.js",
+  "homeassistant": "2024.1.0"
+}

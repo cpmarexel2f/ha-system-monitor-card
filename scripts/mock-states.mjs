@@ -1,0 +1,64 @@
+// Mock Home Assistant states and entity registry shaped like the System Monitor integration,
+// used to render screenshots.
+const boot = new Date(Date.now() - (3 * 86400 + 7 * 3600 + 12 * 60) * 1000).toISOString();
+
+// [object id, translation key, state, attributes]
+const raw = [
+  ["processor_use", "processor_use", "23", { unit_of_measurement: "%" }],
+  ["processor_temperature", "processor_temperature", "54.2", { unit_of_measurement: "°C", device_class: "temperature" }],
+  ["memory_usage", "memory_use_percent", "38.6", { unit_of_measurement: "%" }],
+  ["memory_use", "memory_use", "3091.2", { unit_of_measurement: "MiB", device_class: "data_size" }],
+  ["memory_free", "memory_free", "4910.5", { unit_of_measurement: "MiB", device_class: "data_size" }],
+  ["swap_use", "swap_use", "112.4", { unit_of_measurement: "MiB", device_class: "data_size" }],
+  ["swap_free", "swap_free", "2335.6", { unit_of_measurement: "MiB", device_class: "data_size" }],
+  ["load_1m", "load_1m", "0.42", {}],
+  ["load_5m", "load_5m", "0.37", {}],
+  ["load_15m", "load_15m", "0.31", {}],
+  ["last_boot", "last_boot", boot, { device_class: "timestamp" }],
+  ["disk_use", "disk_use", "37.1", { unit_of_measurement: "GiB", device_class: "data_size" }, "/"],
+  ["disk_free", "disk_free", "72.6", { unit_of_measurement: "GiB", device_class: "data_size" }, "/"],
+  ["disk_use_media", "disk_use", "512.3", { unit_of_measurement: "GiB", device_class: "data_size" }, "/media"],
+  ["disk_free_media", "disk_free", "1351.4", { unit_of_measurement: "GiB", device_class: "data_size" }, "/media"],
+  ["ipv4_address_enp0s3", "ipv4_address", "192.168.1.162", {}, "enp0s3"],
+  ["ipv4_address_hassio", "ipv4_address", "172.30.32.1", {}, "hassio"],
+  ["network_in_enp0s3", "network_in", "67911.4", { unit_of_measurement: "MiB", device_class: "data_size" }, "enp0s3"],
+  ["network_out_enp0s3", "network_out", "90474.5", { unit_of_measurement: "MiB", device_class: "data_size" }, "enp0s3"],
+  ["network_throughput_in_enp0s3", "throughput_network_in", "1.284", { unit_of_measurement: "MB/s", device_class: "data_rate" }, "enp0s3"],
+  ["network_throughput_out_enp0s3", "throughput_network_out", "0.236", { unit_of_measurement: "MB/s", device_class: "data_rate" }, "enp0s3"],
+  ["network_throughput_in_hassio", "throughput_network_in", "0.012", { unit_of_measurement: "MB/s", device_class: "data_rate" }, "hassio"],
+  ["network_throughput_out_hassio", "throughput_network_out", "0.009", { unit_of_measurement: "MB/s", device_class: "data_rate" }, "hassio"],
+  ["process_python3", "process", "on", {}, "python3"],
+  ["process_mosquitto", "process", "on", {}, "mosquitto"],
+  ["process_zigbee2mqtt", "process", "off", {}, "zigbee2mqtt"],
+];
+
+const NAMES = {
+  processor_use: "Processor use", processor_temperature: "Processor temperature", memory_use_percent: "Memory usage",
+  memory_use: "Memory use", memory_free: "Memory free", swap_use: "Swap use", swap_free: "Swap free",
+  load_1m: "Load (1m)", load_5m: "Load (5m)", load_15m: "Load (15m)", last_boot: "Last boot",
+  disk_use: "Disk use", disk_free: "Disk free", ipv4_address: "IPv4 address", network_in: "Network in",
+  network_out: "Network out", throughput_network_in: "Network throughput in", throughput_network_out: "Network throughput out",
+  process: "Process",
+};
+
+export const states = {};
+export const entities = {};
+for (const [obj, key, state, attributes, arg] of raw) {
+  const id = `${key === "process" ? "binary_sensor" : "sensor"}.system_monitor_${obj}`;
+  const friendly_name = `System Monitor ${NAMES[key]}${arg ? ` ${arg}` : ""}`;
+  states[id] = { entity_id: id, state, attributes: { ...attributes, friendly_name } };
+  entities[id] = { entity_id: id, platform: "systemmonitor", translation_key: key };
+}
+for (const [id, installed] of [
+  ["update.home_assistant_core_update", "2026.10.2"],
+  ["update.home_assistant_operating_system_update", "16.2"],
+]) {
+  states[id] = { entity_id: id, state: "off", attributes: { installed_version: installed, latest_version: installed } };
+}
+export const updateAvailable = {
+  "update.home_assistant_core_update": {
+    entity_id: "update.home_assistant_core_update",
+    state: "on",
+    attributes: { installed_version: "2026.10.2", latest_version: "2026.10.3" },
+  },
+};
