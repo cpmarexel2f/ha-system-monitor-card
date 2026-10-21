@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.1
+
+### 🧹 Maintenance
+
+- Remove the `package-lock.json` committed by mistake in 1.5.0. Nothing changes for users.
+
 ## 1.5.0
 
 ### ✨ Features
