@@ -156,7 +156,7 @@ Logos are loaded dynamically, best source first:
 3. The avatar of the GitHub owner of the repository
 4. An icon for the HACS category (integration, dashboard, theme…)
 
-**Check for updates** (the refresh button in the HACS section header, visible even while the list is folded) presses the button of the [HACS Refresh](https://github.com/juju35/ha-hacs-refresh) integration: Home Assistant asks HACS to fetch every downloaded repository again from GitHub, in the background, and the card shows the progress and the time of the last check from HACS Refresh's sensors. The check goes on if you leave the page, and HACS Refresh can also check at an interval set in its options. Without HACS Refresh, the button is hidden and the unfolded list shows a link to install it.
+**Check for updates** (the refresh button next to the HACS section title, visible even while the list is folded) presses the button of the [HACS Refresh](https://github.com/juju35/ha-hacs-refresh) integration: Home Assistant asks HACS to fetch every downloaded repository again from GitHub, in the background, and the card shows the progress and the time of the last check from HACS Refresh's sensors. The check goes on if you leave the page, and HACS Refresh can also check at an interval set in its options. Without HACS Refresh, the button is hidden and the unfolded list shows a link to install it.
 
 Thresholds:
 

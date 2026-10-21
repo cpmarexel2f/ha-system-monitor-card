@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.3
+
+### 💄 Style
+- The **Check for updates** button sits right after the HACS title and update badge, away from the extension count and the fold chevron, so it is no longer pressed by mistake.
+
 ## 1.3.2
 
 ### 💄 Style

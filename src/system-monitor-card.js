@@ -667,7 +667,7 @@ const FULL_STYLE = `
          border: none; border-radius: 10px; cursor: pointer; color: var(--primary-color, #03a9f4);
          background: color-mix(in srgb, var(--primary-color, #03a9f4) 15%, transparent); }
   .btn:disabled, .btn[aria-disabled="true"] { cursor: default; opacity: .8; }
-  .section-title .btn-check { text-transform: none; letter-spacing: 0; padding: 4px 8px; margin-left: 4px; font-size: 12px; gap: 4px; }
+  .section-title .btn-check { text-transform: none; letter-spacing: 0; padding: 4px 8px; margin-left: 6px; margin-right: 16px; font-size: 12px; gap: 4px; }
   .btn .icon { width: 16px; height: 16px; }
   .spin { animation: sm-spin 1s linear infinite; }
   @keyframes sm-spin { to { transform: rotate(360deg); } }
@@ -919,8 +919,8 @@ class SystemMonitorCard extends SystemMonitorBase {
     }
     const head = `<div class="section-title toggle ${open ? "" : "closed"}" data-action="hacs" role="button" aria-expanded="${open}">
         ${svgIcon(ICONS.hacs)}${this._t("hacs")}
-        ${n ? `<span class="chip warn"><span class="dot"></span>${n}</span>` : ""}
-        <span class="count">${ext.length}</span>${check}${svgIcon(ICONS.chevron, "chevron")}
+        ${n ? `<span class="chip warn"><span class="dot"></span>${n}</span>` : ""}${check}
+        <span class="count">${ext.length}</span>${svgIcon(ICONS.chevron, "chevron")}
       </div>`;
     if (!open) return `<div class="hacs">${head}</div>`;
     const rows = ext.map((x) => {
