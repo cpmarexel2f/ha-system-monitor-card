@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.4
+
+### 💄 Style
+
+- A click on the **Integrations** tile shows its section unfolded even while every integration is available (last reload, last check, **Check now** button); a click elsewhere hides it again, like the processes one.
+
 ## 1.8.3
 
 ### 💄 Style
