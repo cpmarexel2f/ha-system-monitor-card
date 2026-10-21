@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.3
+
+### 💄 Style
+
+- The **Processes** section is hidden while every process runs, like the integrations one. Its tile in the status row still shows "Running", and a click on it shows the list. It shows up by itself as soon as a process stops.
+
 ## 1.8.2
 
 ### 💄 Style

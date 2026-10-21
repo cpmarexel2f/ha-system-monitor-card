@@ -26,7 +26,7 @@ The cards are built on top of the core [System Monitor integration](https://www.
 - Home Assistant Core and OS versions, with an orange badge when an update is available
 - Network download / upload rates and totals, per interface (virtual interfaces such as `docker0` or `hassio` are hidden)
 - Storage: every monitored mount point and the swap, with used space
-- Monitored processes, green when running and red when stopped: folded while they all run (and folding again on a click elsewhere), always unfolded while one is stopped, with their overall status in the status row
+- Monitored processes, green when running and red when stopped: hidden while they all run (their status tile shows the list on a click), always shown while one is stopped, with their overall status in the status row
 - **HACS extensions**: a collapsible list of every repository downloaded with HACS, with its logo, version, update status and a GitHub button, plus a **Check for updates** button that runs on the server through [HACS Refresh](https://github.com/juju35/ha-hacs-refresh); its overall status sits in the status row
 - **Unavailable integrations**: with [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog), a collapsible list of the integrations whose entities are all unavailable, with their logo, since when, how many times they were reloaded and whether the watchdog gave up, plus the last reload and a **Check now** button; its overall status sits in the status row
 - Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature)
@@ -155,7 +155,7 @@ Under the header, a row of tiles gives the overall status of each section: **HAC
 
 ### Processes
 
-The processes section is folded by default while every monitored process runs: click its title or its tile in the status row to unfold it, and it folds again on a click elsewhere, like the HACS and integrations lists. As soon as a process is stopped, the section unfolds by itself and stays unfolded, whatever you click, until every process runs again. Its title shows the number of processes, and the number stopped in red.
+The processes section is hidden while every monitored process runs: the **Processes** tile of the status row says "Running", and a click on it shows the list, which hides again on a click on its title or elsewhere. As soon as a process is stopped, the section shows up by itself and stays, whatever you click, until every process runs again. Its title shows the number of processes, and the number stopped in red.
 
 ### HACS extensions
 

@@ -1213,7 +1213,8 @@ class SystemMonitorCard extends SystemMonitorBase {
         ${n ? `<span class="chip crit"><span class="dot"></span>${n}</span>` : ""}
         <span class="count">${entries.length}</span>${svgIcon(ICONS.chevron, "chevron")}
       </div>`;
-    if (!open) return `<div>${head}</div>`;
+    // Hidden while every process runs, unless unfolded from the status tile; shown as soon as one stops.
+    if (!open) return "";
     const chips = entries.map(([name, id]) => {
       const on = this._s(id)?.state === "on";
       return `<span class="chip clickable ${on ? "good" : "crit"}" data-entity="${id}"><span class="dot"></span>${esc(name)}</span>`;
