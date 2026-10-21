@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.2
+
+### 💄 Style
+
+- The **Integrations** section is hidden while every integration is available. Its tile in the status row still shows "Available".
+
 ## 1.8.1
 
 ### 🐛 Fixes

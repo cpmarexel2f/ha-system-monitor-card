@@ -1155,6 +1155,8 @@ class SystemMonitorCard extends SystemMonitorBase {
     const st = this._s(wd.unavailable);
     if (!st) return "";
     const items = st.attributes.integrations || [];
+    // Nothing to show while every integration is available: the status tile says so.
+    if (!items.length) return "";
     const open = this._wdOpen;
     const locale = lang(this._hass, this._config);
     let check = "";
