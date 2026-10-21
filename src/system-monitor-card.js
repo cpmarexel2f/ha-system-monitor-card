@@ -547,6 +547,7 @@ class SystemMonitorBase extends HTMLElement {
     this._html = "";
     this._hacsOpen = false;
     this._wdOpen = false;
+    this._procsOpen = false;
     this._imgFailed = new Set();
     this.shadowRoot.addEventListener("click", (ev) => {
       const path = ev.composedPath();
@@ -556,7 +557,8 @@ class SystemMonitorBase extends HTMLElement {
       if (action) {
         if (action.dataset.action === "hacs") this._hacsOpen = !this._hacsOpen;
         if (action.dataset.action === "wd") this._wdOpen = !this._wdOpen;
-        if (action.dataset.action === "procs") this._procsOpen = !this._procsUnfolded();
+        // With a process stopped, the list stays unfolded.
+        if (action.dataset.action === "procs" && !this._procsKo()) this._procsOpen = !this._procsOpen;
         const enabled = action.getAttribute("aria-disabled") !== "true";
         if (action.dataset.action === "hacs-check" && enabled) this._checkHacs();
         if (action.dataset.action === "hacs-check-ext" && enabled) this._checkExt(action.dataset.target);
@@ -597,10 +599,12 @@ class SystemMonitorBase extends HTMLElement {
     this._tokenTimer = setInterval(() => this._fetchBrandsToken(true), 20 * 60 * 1000);
     // A click elsewhere on the page folds the HACS and integrations lists (as in ha-carburants-france).
     // A click, not a pointerdown: folding on press would shift the layout under the pointer before the click.
+    // The processes list folds too, unless a process is stopped.
     this._onOutside ??= (ev) => {
-      if ((!this._hacsOpen && !this._wdOpen) || ev.composedPath().includes(this)) return;
+      if ((!this._hacsOpen && !this._wdOpen && !this._procsOpen) || ev.composedPath().includes(this)) return;
       this._hacsOpen = false;
       this._wdOpen = false;
+      this._procsOpen = false;
       this._update();
     };
     document.addEventListener("click", this._onOutside, true);
@@ -773,18 +777,17 @@ class SystemMonitorBase extends HTMLElement {
     return Object.values(sm.procs).filter((id) => this._s(id)?.state !== "on");
   }
 
+  _procsKo() {
+    return this._stopped(discover(this._hass)).length > 0;
+  }
+
   /**
-   * The processes section is folded while every process runs and unfolded as soon as one stops.
-   * A click folds or unfolds it until that status changes again.
+   * The processes section is always unfolded while a process is stopped. Otherwise it is folded
+   * by default, and like the HACS and integrations lists, unfolds on a click and folds again on a
+   * click elsewhere.
    */
   _procsUnfolded() {
-    const sm = discover(this._hass);
-    const ko = this._stopped(sm).length > 0;
-    if (this._procsKo !== ko) {
-      this._procsKo = ko;
-      this._procsOpen = null;
-    }
-    return this._procsOpen ?? ko;
+    return this._procsKo() || !!this._procsOpen;
   }
 
   /** Processes status tile: all running, or how many are stopped. */

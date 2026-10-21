@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.8.1
+
+### 🐛 Fixes
+
+- The processes list folds again on a click elsewhere, like the HACS and integrations lists, while every process runs.
+- While a process is stopped, the processes list stays unfolded: neither its title nor a click elsewhere folds it.
+
 ## 1.8.0
 
 ### 💄 Style
