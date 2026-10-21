@@ -513,10 +513,19 @@ class SystemMonitorBase extends HTMLElement {
   connectedCallback() {
     // The brands access token rotates: refresh it before it expires.
     this._tokenTimer = setInterval(() => this._fetchBrandsToken(true), 20 * 60 * 1000);
+    // A click elsewhere on the page folds the HACS list (as in ha-carburants-france). A click, not a
+    // pointerdown: folding on press would shift the layout under the pointer before the click.
+    this._onOutside ??= (ev) => {
+      if (!this._hacsOpen || ev.composedPath().includes(this)) return;
+      this._hacsOpen = false;
+      this._update();
+    };
+    document.addEventListener("click", this._onOutside, true);
   }
 
   disconnectedCallback() {
     clearInterval(this._tokenTimer);
+    document.removeEventListener("click", this._onOutside, true);
   }
 
   /** Token for /api/brands (Home Assistant 2026.3+), which serves local custom integration brands before the CDN. */

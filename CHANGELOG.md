@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.5.0
+
+### ✨ Features
+
+- A click anywhere else on the page folds the HACS extensions list again, as in ha-carburants-france.
+
 ## 1.4.0
 
 ### What's new
