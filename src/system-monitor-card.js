@@ -734,7 +734,7 @@ class SystemMonitorBase extends HTMLElement {
         <div class="titles">
           <div class="name">${esc(c.title || "Home Assistant")}</div>
           <div class="sub">${esc(sub)}</div>
-          <div class="chips">${chip}${this._procsChip(sm)}${this._hacsChip()}${this._wdChip()}</div>
+          <div class="chips">${chip}${this._hacsChip()}${this._procsChip(sm)}${this._wdChip()}</div>
         </div>
       </div>`;
   }

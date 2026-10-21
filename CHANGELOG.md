@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.1
+
+### 💄 Style
+
+- The processes status in the header moves after the HACS one, just before the integrations one.
+
 ## 1.7.0
 
 ### ✨ Features

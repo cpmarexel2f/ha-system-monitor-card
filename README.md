@@ -26,7 +26,7 @@ The cards are built on top of the core [System Monitor integration](https://www.
 - Home Assistant Core and OS versions, with an orange badge when an update is available
 - Network download / upload rates and totals, per interface (virtual interfaces such as `docker0` or `hassio` are hidden)
 - Storage: every monitored mount point and the swap, with used space
-- Monitored processes, green when running and red when stopped: folded while they all run, unfolded as soon as one stops, with their overall status next to the Home Assistant one
+- Monitored processes, green when running and red when stopped: folded while they all run, unfolded as soon as one stops, with their overall status in the header, just before the integrations one
 - **HACS extensions**: a collapsible list of every repository downloaded with HACS, with its logo, version, update status and a GitHub button, plus a **Check for updates** button that runs on the server through [HACS Refresh](https://github.com/juju35/ha-hacs-refresh); the overall HACS status sits under the Home Assistant one
 - **Unavailable integrations**: with [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog), a collapsible list of the integrations whose entities are all unavailable, with their logo, since when, how many times they were reloaded and whether the watchdog gave up, plus the last reload and a **Check now** button; the overall status sits under the HACS one
 - Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature)
@@ -151,7 +151,7 @@ The Core and OS versions come from the `update.home_assistant_core_*` and `updat
 
 ### Processes
 
-The processes section is folded while every monitored process runs, and unfolds by itself as soon as one stops. Its title shows the number of processes, and the number stopped in red. The header shows the overall status next to the Home Assistant one: "Processes running" or the number stopped; click it, or the section title, to fold or unfold the list. That choice holds until the status changes.
+The processes section is folded while every monitored process runs, and unfolds by itself as soon as one stops. Its title shows the number of processes, and the number stopped in red. The header shows the overall status after the HACS one and before the integrations one: "Processes running" or the number stopped; click it, or the section title, to fold or unfold the list. That choice holds until the status changes.
 
 ### HACS extensions
 
