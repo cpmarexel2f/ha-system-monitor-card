@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.1
+
+### 💄 Style
+- HACS section header laid out like the ha-dockhand-card sections: the number of extensions is aligned on the right, before a chevron that rotates when the section folds.
+
 ## 1.2.0
 
 ### What's new
