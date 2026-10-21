@@ -84,7 +84,7 @@ for (const s of shots) {
       el.setConfig({ type: `custom:${type}`, ...config });
       el.hass = {
         states, entities, devices, config: { version: "2026.10.2" }, language: "en", locale: { language: "en" },
-        user: { is_admin: true }, callWS: async () => { throw new Error("offline"); },
+        user: { is_admin: true }, services: { hacs_refresh: { check_updates: {}, check_repository: {} } }, callWS: async () => { throw new Error("offline"); },
       };
       document.getElementById("root").appendChild(el);
       if (open) el.shadowRoot.querySelector('[data-action="hacs"]').click();

@@ -71,6 +71,7 @@ const STRINGS = {
     last_check: "Last check {t}",
     needs_refresh: "Install HACS Refresh to check every extension for updates from Home Assistant.",
     github: "Open on GitHub",
+    check_ext: "Check this extension for updates",
     // Editor
     title: "Title (optional, defaults to Home Assistant)",
     show_image: "Show Home Assistant logo",
@@ -116,6 +117,7 @@ const STRINGS = {
     last_check: "Dernière recherche {t}",
     needs_refresh: "Installez HACS Refresh pour rechercher les mises à jour de toutes les extensions depuis Home Assistant.",
     github: "Ouvrir sur GitHub",
+    check_ext: "Rechercher les mises à jour de cette extension",
     title: "Titre (facultatif, Home Assistant par défaut)",
     show_image: "Afficher le logo Home Assistant",
     show_system: "Afficher le système (CPU, RAM, disque, température)",
@@ -475,7 +477,9 @@ class SystemMonitorBase extends HTMLElement {
       const action = path.find((n) => n.dataset && n.dataset.action);
       if (action) {
         if (action.dataset.action === "hacs") this._hacsOpen = !this._hacsOpen;
-        if (action.dataset.action === "hacs-check" && action.getAttribute("aria-disabled") !== "true") this._checkHacs();
+        const enabled = action.getAttribute("aria-disabled") !== "true";
+        if (action.dataset.action === "hacs-check" && enabled) this._checkHacs();
+        if (action.dataset.action === "hacs-check-ext" && enabled) this._checkExt(action.dataset.target);
         this._update();
         return;
       }
@@ -547,6 +551,22 @@ class SystemMonitorBase extends HTMLElement {
     const cat = ICONS[x.category] ? x.category : "hacs";
     if (!src.length) return `<span class="ext-logo fallback">${svgIcon(ICONS[cat])}</span>`;
     return `<span class="ext-logo"><img src="${esc(src[0])}" data-fb="${esc(src.slice(1).join(" "))}" data-cat="${cat}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>`;
+  }
+
+  /** Checks one extension through HACS Refresh's check_repository action, which ends with the result. */
+  async _checkExt(entityId) {
+    this._extChecking ??= new Set();
+    if (this._extChecking.has(entityId)) return;
+    this._extChecking.add(entityId);
+    this._checkError = null;
+    this._update();
+    try {
+      await this._hass.callService("hacs_refresh", "check_repository", { entity_id: entityId });
+    } catch (e) {
+      this._checkError = e?.message || String(e);
+    }
+    this._extChecking.delete(entityId);
+    this._update();
   }
 
   /** Presses the HACS Refresh button: the check runs on the server, its progress comes back through the status sensor. */
@@ -688,6 +708,8 @@ const FULL_STYLE = `
   .ext .chip { flex: none; }
   .gh { flex: none; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 50%;
         color: var(--secondary-text-color); }
+  .gh[role="button"] { cursor: pointer; }
+  .gh[aria-disabled="true"] { cursor: default; }
   .gh:hover { background: var(--secondary-background-color, rgba(127,127,127,.12)); color: var(--primary-text-color); }
   .content { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 16px; }
   .section-title { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; text-transform: uppercase;
@@ -923,6 +945,11 @@ class SystemMonitorCard extends SystemMonitorBase {
         <span class="count">${ext.length}</span>${svgIcon(ICONS.chevron, "chevron")}
       </div>`;
     if (!open) return `<div class="hacs">${head}</div>`;
+    // Per-extension check, with HACS Refresh 0.2.0 or later.
+    const canCheckExt = !!this._hass.services?.hacs_refresh?.check_repository;
+    const st = rf.status ? this._s(rf.status) : null;
+    const fullRunning = st?.state === "running";
+    const serverChecking = new Set(st?.attributes?.checking || []);
     const rows = ext.map((x) => {
       const ver = x.update ? `${esc(x.installed || "?")} → <b>${esc(x.latest || "?")}</b>` : esc(x.installed || "—");
       const status = x.update
@@ -931,10 +958,14 @@ class SystemMonitorCard extends SystemMonitorBase {
       const gh = x.repo
         ? `<a class="gh" href="https://github.com/${esc(x.repo)}" target="_blank" rel="noopener noreferrer" title="${esc(this._t("github"))}" aria-label="${esc(this._t("github"))}">${svgIcon(ICONS.github)}</a>`
         : "";
+      const checking = fullRunning || serverChecking.has(x.id) || !!this._extChecking?.has(x.id);
+      const check = canCheckExt
+        ? `<span class="gh" role="button" tabindex="0" data-action="hacs-check-ext" data-target="${x.id}" title="${esc(this._t("check_ext"))}" aria-label="${esc(this._t("check_ext"))}" aria-disabled="${checking}">${svgIcon(ICONS.refresh, checking ? "spin" : "")}</span>`
+        : "";
       return `<div class="ext clickable" data-entity="${x.id}">
           ${this._logo(x)}
           <div class="grow"><div class="ext-name">${esc(x.name)}</div><div class="ext-ver">${ver}</div></div>
-          ${status}${gh}
+          ${status}${check}${gh}
         </div>`;
     });
     return `<div class="hacs">${head}${info}<div class="exts">${rows.join("")}</div></div>`;

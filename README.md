@@ -147,7 +147,7 @@ The Core and OS versions come from the `update.home_assistant_core_*` and `updat
 
 ### HACS extensions
 
-HACS creates an update entity for every repository it downloaded. The card lists them with their name and category (from the HACS device), installed and latest version, and the GitHub repository (from the release URL). The list is folded by default: click the **HACS** section, or the HACS status in the header, to unfold it. Click a line to open its update dialog (release notes, install), or the GitHub button to open the repository.
+HACS creates an update entity for every repository it downloaded. The card lists them with their name and category (from the HACS device), installed and latest version, and the GitHub repository (from the release URL). The list is folded by default: click the **HACS** section, or the HACS status in the header, to unfold it. Click a line to open its update dialog (release notes, install), its refresh button to check that extension alone for updates (needs HACS Refresh 0.2.0 or later), or the GitHub button to open the repository.
 
 Logos are loaded dynamically, best source first:
 

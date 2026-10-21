@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.4.0
+
+### What's new
+- Each line of the HACS list has a **Check for updates** button for that extension alone, between its status and the GitHub button. It spins until the check ends, then the line shows the result. Needs [HACS Refresh](https://github.com/juju35/ha-hacs-refresh) 0.2.0 or later (`hacs_refresh.check_repository` action); with an older version the button is not shown.
+
 ## 1.3.3
 
 ### 💄 Style
