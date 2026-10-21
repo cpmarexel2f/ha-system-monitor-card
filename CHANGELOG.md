@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.0.3
+
+### 💄 Style
+
+- The Home Assistant logo is now on the left of the header, before the title, versions and status, on both cards.
+
 ## 1.0.2
 
 ### 🐛 Fixes

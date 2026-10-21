@@ -436,12 +436,12 @@ class SystemMonitorBase extends HTMLElement {
       )}</span>`;
     return `
       <div class="header">
+        ${c.show_image !== false ? `<img class="logo" src="${IMG_LOGO}" alt="Home Assistant">` : ""}
         <div class="titles">
           <div class="name">${esc(c.title || "Home Assistant")}</div>
           <div class="sub">${esc(sub)}</div>
           ${chip}
         </div>
-        ${c.show_image !== false ? `<img class="logo" src="${IMG_LOGO}" alt="Home Assistant">` : ""}
       </div>`;
   }
 
