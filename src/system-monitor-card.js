@@ -73,6 +73,9 @@ const STRINGS = {
     needs_refresh: "Install HACS Refresh to check every extension for updates from Home Assistant.",
     github: "Open on GitHub",
     check_ext: "Check this extension for updates",
+    procs_ok: "Processes running",
+    procs_one: "1 process stopped",
+    procs_many: "{n} processes stopped",
     integrations: "Integrations",
     wd_ok: "Integrations available",
     wd_one: "1 integration unavailable",
@@ -135,6 +138,9 @@ const STRINGS = {
     needs_refresh: "Installez HACS Refresh pour rechercher les mises à jour de toutes les extensions depuis Home Assistant.",
     github: "Ouvrir sur GitHub",
     check_ext: "Rechercher les mises à jour de cette extension",
+    procs_ok: "Processus en marche",
+    procs_one: "1 processus arrêté",
+    procs_many: "{n} processus arrêtés",
     integrations: "Intégrations",
     wd_ok: "Intégrations disponibles",
     wd_one: "1 intégration indisponible",
@@ -532,6 +538,7 @@ class SystemMonitorBase extends HTMLElement {
       if (action) {
         if (action.dataset.action === "hacs") this._hacsOpen = !this._hacsOpen;
         if (action.dataset.action === "wd") this._wdOpen = !this._wdOpen;
+        if (action.dataset.action === "procs") this._procsOpen = !this._procsUnfolded();
         const enabled = action.getAttribute("aria-disabled") !== "true";
         if (action.dataset.action === "hacs-check" && enabled) this._checkHacs();
         if (action.dataset.action === "hacs-check-ext" && enabled) this._checkExt(action.dataset.target);
@@ -727,7 +734,7 @@ class SystemMonitorBase extends HTMLElement {
         <div class="titles">
           <div class="name">${esc(c.title || "Home Assistant")}</div>
           <div class="sub">${esc(sub)}</div>
-          <div class="chips">${chip}${this._hacsChip()}${this._wdChip()}</div>
+          <div class="chips">${chip}${this._procsChip(sm)}${this._hacsChip()}${this._wdChip()}</div>
         </div>
       </div>`;
   }
@@ -740,6 +747,33 @@ class SystemMonitorBase extends HTMLElement {
     const n = ext.filter((x) => x.update).length;
     const text = n === 0 ? this._t("hacs_ok") : n === 1 ? this._t("hacs_updates_one") : this._t("hacs_updates").replace("{n}", n);
     return `<span class="chip clickable ${n ? "warn" : "good"}" data-action="hacs"><span class="dot"></span>${esc(text)}</span>`;
+  }
+
+  /** Monitored processes that are stopped (process binary sensors off). */
+  _stopped(sm) {
+    return Object.values(sm.procs).filter((id) => this._s(id)?.state !== "on");
+  }
+
+  /**
+   * The processes section is folded while every process runs and unfolded as soon as one stops.
+   * A click folds or unfolds it until that status changes again.
+   */
+  _procsUnfolded() {
+    const sm = discover(this._hass);
+    const ko = this._stopped(sm).length > 0;
+    if (this._procsKo !== ko) {
+      this._procsKo = ko;
+      this._procsOpen = null;
+    }
+    return this._procsOpen ?? ko;
+  }
+
+  /** Processes status next to the Home Assistant one: all running, or how many are stopped. */
+  _procsChip(sm) {
+    if (this._config.show_processes === false || !Object.keys(sm.procs).length) return "";
+    const n = this._stopped(sm).length;
+    const text = n === 0 ? this._t("procs_ok") : n === 1 ? this._t("procs_one") : this._t("procs_many").replace("{n}", n);
+    return `<span class="chip clickable ${n ? "crit" : "good"}" data-action="procs"><span class="dot"></span>${esc(text)}</span>`;
   }
 
   /** Integration Watchdog status under the HACS one: all integrations available, or how many are not. */
@@ -847,7 +881,7 @@ const FULL_STYLE = `
               color: var(--secondary-text-color); }
   .vol .bar { margin: 6px 0 3px; }
   .vol .detail { font-size: 12px; color: var(--secondary-text-color); display: flex; justify-content: space-between; }
-  .procs { display: flex; flex-wrap: wrap; gap: 6px; }
+  .procs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
   .procs .chip { font-weight: 400; }
 `;
 
@@ -1123,12 +1157,21 @@ class SystemMonitorCard extends SystemMonitorBase {
   }
 
   _processes(sm) {
-    const chips = Object.entries(sm.procs).map(([name, id]) => {
+    const entries = Object.entries(sm.procs);
+    if (!entries.length) return "";
+    const n = this._stopped(sm).length;
+    const open = this._procsUnfolded();
+    const head = `<div class="section-title toggle ${open ? "" : "closed"}" data-action="procs" role="button" aria-expanded="${open}">
+        ${svgIcon(ICONS.process)}${this._t("processes")}
+        ${n ? `<span class="chip crit"><span class="dot"></span>${n}</span>` : ""}
+        <span class="count">${entries.length}</span>${svgIcon(ICONS.chevron, "chevron")}
+      </div>`;
+    if (!open) return `<div>${head}</div>`;
+    const chips = entries.map(([name, id]) => {
       const on = this._s(id)?.state === "on";
       return `<span class="chip clickable ${on ? "good" : "crit"}" data-entity="${id}"><span class="dot"></span>${esc(name)}</span>`;
     });
-    if (!chips.length) return "";
-    return `<div><div class="section-title">${svgIcon(ICONS.process)}${this._t("processes")}</div><div class="procs">${chips.join("")}</div></div>`;
+    return `<div>${head}<div class="procs">${chips.join("")}</div></div>`;
   }
 }
 

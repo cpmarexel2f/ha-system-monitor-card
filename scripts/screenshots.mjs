@@ -3,7 +3,7 @@
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
-import { states, entities, devices, updateAvailable, hacsUpdates } from "./mock-states.mjs";
+import { states, entities, devices, updateAvailable, hacsUpdates, procsRunning } from "./mock-states.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const cardJs = readFileSync(`${root}dist/system-monitor-card.js`, "utf8");
@@ -45,7 +45,7 @@ const page_html = (theme, width) => `<!doctype html><html><head><meta charset="u
 </style></head><body><div id="root"></div></body></html>`;
 
 const shots = [
-  { file: "card", type: "system-monitor-card", theme: "light", width: 460, config: {} },
+  { file: "card", type: "system-monitor-card", theme: "light", width: 460, config: {}, procsOk: true },
   { file: "card-dark", type: "system-monitor-card", theme: "dark", width: 460, config: { language: "fr" }, update: true },
   { file: "card-hacs", type: "system-monitor-card", theme: "light", width: 460, config: { show_system: false, show_network: false, show_storage: false, show_processes: false }, hacs: true, open: true },
   { file: "card-watchdog", type: "system-monitor-card", theme: "light", width: 460, config: { show_system: false, show_network: false, show_storage: false, show_processes: false, show_hacs: false }, open: true, action: "wd" },
@@ -93,7 +93,7 @@ for (const s of shots) {
     {
       type: s.type,
       config: s.config,
-      states: { ...states, ...(s.update ? updateAvailable : {}), ...(s.update || s.hacs ? hacsUpdates : {}) },
+      states: { ...states, ...(s.update ? updateAvailable : {}), ...(s.update || s.hacs ? hacsUpdates : {}), ...(s.procsOk ? procsRunning : {}) },
       entities,
       devices,
       open: s.open,

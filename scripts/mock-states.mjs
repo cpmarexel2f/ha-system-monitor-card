@@ -122,3 +122,7 @@ for (const [id, key, state, attributes] of [
   states[id] = { entity_id: id, state, attributes };
   entities[id] = { entity_id: id, platform: "integration_watchdog", device_id: "integration_watchdog", ...(key ? { translation_key: key } : {}) };
 }
+
+// Every monitored process running: the processes section stays folded.
+const z2m = "binary_sensor.system_monitor_process_zigbee2mqtt";
+export const procsRunning = { [z2m]: { ...states[z2m], state: "on" } };

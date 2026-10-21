@@ -26,7 +26,7 @@ The cards are built on top of the core [System Monitor integration](https://www.
 - Home Assistant Core and OS versions, with an orange badge when an update is available
 - Network download / upload rates and totals, per interface (virtual interfaces such as `docker0` or `hassio` are hidden)
 - Storage: every monitored mount point and the swap, with used space
-- Monitored processes, green when running and red when stopped
+- Monitored processes, green when running and red when stopped: folded while they all run, unfolded as soon as one stops, with their overall status next to the Home Assistant one
 - **HACS extensions**: a collapsible list of every repository downloaded with HACS, with its logo, version, update status and a GitHub button, plus a **Check for updates** button that runs on the server through [HACS Refresh](https://github.com/juju35/ha-hacs-refresh); the overall HACS status sits under the Home Assistant one
 - **Unavailable integrations**: with [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog), a collapsible list of the integrations whose entities are all unavailable, with their logo, since when, how many times they were reloaded and whether the watchdog gave up, plus the last reload and a **Check now** button; the overall status sits under the HACS one
 - Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature)
@@ -129,7 +129,7 @@ language: fr
 | `show_system` | full | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
 | `show_network` | both | `true` | Network download / upload |
 | `show_storage` | both | `true` | Full card: mount points and swap. Mini card: disk bar |
-| `show_processes` | full | `true` | Monitored processes |
+| `show_processes` | full | `true` | Monitored processes and their overall status in the header |
 | `show_hacs` | full | `true` | HACS extensions list and HACS status under the Home Assistant one |
 | `show_watchdog` | full | `true` | Unavailable integrations list and their status under the HACS one (needs Integration Watchdog) |
 | `interface` | both | All physical interfaces | Network interface to display (e.g. `eth0`, `enp0s3`) |
@@ -148,6 +148,10 @@ language: fr
 The cards read the entity registry of Home Assistant and keep the entities of the `systemmonitor` platform. Each sensor is recognized by its translation key (`processor_use`, `memory_use_percent`, `disk_free`, `throughput_network_in`…), so entity ids translated in another language (for example `sensor.system_monitor_utilisation_du_processeur`) and renamed entities are supported. Mount points, interfaces and process names are read from the end of the sensor name. When the registry is not available, English entity ids (`sensor.system_monitor_processor_use`…) are used as a fallback.
 
 The Core and OS versions come from the `update.home_assistant_core_*` and `update.home_assistant_operating_system_*` entities when they exist, otherwise from the running Home Assistant version.
+
+### Processes
+
+The processes section is folded while every monitored process runs, and unfolds by itself as soon as one stops. Its title shows the number of processes, and the number stopped in red. The header shows the overall status next to the Home Assistant one: "Processes running" or the number stopped; click it, or the section title, to fold or unfold the list. That choice holds until the status changes.
 
 ### HACS extensions
 

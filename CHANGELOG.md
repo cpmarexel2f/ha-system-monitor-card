@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.7.0
+
+### ✨ Features
+
+- The processes section is folded while every process runs, and unfolds by itself as soon as one stops. Its title shows the number of processes and, in red, the number stopped.
+- Processes status in the header, right after the Home Assistant one: "Processes running" or the number of processes stopped; click it to fold or unfold the list.
+
 ## 1.6.0
 
 ### ✨ Features
