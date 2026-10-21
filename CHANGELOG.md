@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.3.2
+
+### 💄 Style
+- The **Check for updates** button moved to the HACS section header, next to the number of extensions: it stays visible while the list is folded (the default). It spins and shows the progress while a check runs; the time of the last check is shown under the header once the list is unfolded.
+
 ## 1.3.1
 
 ### Development

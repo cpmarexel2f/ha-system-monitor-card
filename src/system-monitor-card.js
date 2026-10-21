@@ -475,12 +475,19 @@ class SystemMonitorBase extends HTMLElement {
       const action = path.find((n) => n.dataset && n.dataset.action);
       if (action) {
         if (action.dataset.action === "hacs") this._hacsOpen = !this._hacsOpen;
-        if (action.dataset.action === "hacs-check") this._checkHacs();
+        if (action.dataset.action === "hacs-check" && action.getAttribute("aria-disabled") !== "true") this._checkHacs();
         this._update();
         return;
       }
       const el = path.find((n) => n.dataset && n.dataset.entity);
       if (el) fireMoreInfo(this, el.dataset.entity);
+    });
+    // Keyboard: Enter / Space on an element with role="button" (the check button is a span inside the folding header).
+    this.shadowRoot.addEventListener("keydown", (ev) => {
+      if ((ev.key === "Enter" || ev.key === " ") && ev.target?.getAttribute?.("role") === "button") {
+        ev.preventDefault();
+        ev.target.click();
+      }
     });
     // Logos load dynamically: on error, try the next source, then fall back to the category icon.
     this.shadowRoot.addEventListener(
@@ -655,11 +662,12 @@ const FULL_STYLE = `
   .section-title .chevron { transition: transform .2s ease; }
   .section-title.closed .chevron { transform: rotate(-90deg); }
   .section-title .chip { text-transform: none; letter-spacing: 0; padding: 0 8px; }
-  .hacs .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 10px 0 4px; }
+  .hacs .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
   .btn { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-size: 13px; font-weight: 500; padding: 6px 12px;
          border: none; border-radius: 10px; cursor: pointer; color: var(--primary-color, #03a9f4);
          background: color-mix(in srgb, var(--primary-color, #03a9f4) 15%, transparent); }
-  .btn:disabled { cursor: default; opacity: .8; }
+  .btn:disabled, .btn[aria-disabled="true"] { cursor: default; opacity: .8; }
+  .section-title .btn-check { text-transform: none; letter-spacing: 0; padding: 4px 8px; margin-left: 4px; font-size: 12px; gap: 4px; }
   .btn .icon { width: 16px; height: 16px; }
   .spin { animation: sm-spin 1s linear infinite; }
   @keyframes sm-spin { to { transform: rotate(360deg); } }
@@ -880,37 +888,41 @@ class SystemMonitorCard extends SystemMonitorBase {
     if (!ext.length) return "";
     const open = this._hacsOpen;
     const n = ext.filter((x) => x.update).length;
-    const head = `<div class="section-title toggle ${open ? "" : "closed"}" data-action="hacs" role="button" aria-expanded="${open}">
-        ${svgIcon(ICONS.hacs)}${this._t("hacs")}
-        ${n ? `<span class="chip warn"><span class="dot"></span>${n}</span>` : ""}
-        <span class="count">${ext.length}</span>${svgIcon(ICONS.chevron, "chevron")}
-      </div>`;
-    if (!open) return `<div class="hacs">${head}</div>`;
     const rf = discoverRefresh(this._hass);
     const admin = !this._hass.user || this._hass.user.is_admin;
-    let toolbar = "";
+    // Check button in the header, so it stays visible while the section is folded.
+    let check = "";
+    let info = "";
     if (rf.button) {
       const st = this._s(rf.status);
       const running = st?.state === "running";
       const busy = running || this._s(rf.button)?.state === "unavailable";
-      const label = running
+      const progress = running ? `${st.attributes.done ?? 0}/${st.attributes.total || "…"}` : "";
+      const title = running
         ? this._t("checking").replace("{i}", st.attributes.done ?? 0).replace("{n}", st.attributes.total || "…")
         : this._t("check_updates");
+      check = `<span class="btn btn-check" role="button" tabindex="0" data-action="hacs-check" title="${esc(title)}" aria-label="${esc(title)}" aria-disabled="${busy}">
+          ${svgIcon(ICONS.refresh, running ? "spin" : "")}${progress ? `<span>${esc(progress)}</span>` : ""}
+        </span>`;
       const error = this._checkError || (st?.state === "error" ? st.attributes.error : null);
       const last = this._s(rf.lastCheck)?.state;
       const lastText = !running && last && !["unknown", "unavailable"].includes(last)
         ? this._t("last_check").replace("{t}", relTime(last, lang(this._hass, this._config)))
         : "";
-      toolbar = `<div class="toolbar">
-          <button class="btn" data-action="hacs-check" ${busy ? "disabled" : ""}>
-            ${svgIcon(ICONS.refresh, running ? "spin" : "")}${esc(label)}
-          </button>
+      if (lastText || error)
+        info = `<div class="toolbar">
           ${lastText ? `<span class="muted last clickable" data-entity="${rf.lastCheck}">${esc(lastText)}</span>` : ""}
           ${error ? `<span class="err">${esc(this._t("check_failed").replace("{e}", error))}</span>` : ""}
         </div>`;
     } else if (admin) {
-      toolbar = `<div class="toolbar"><a class="hint" href="https://github.com/juju35/ha-hacs-refresh" target="_blank" rel="noopener noreferrer">${esc(this._t("needs_refresh"))}</a></div>`;
+      info = `<div class="toolbar"><a class="hint" href="https://github.com/juju35/ha-hacs-refresh" target="_blank" rel="noopener noreferrer">${esc(this._t("needs_refresh"))}</a></div>`;
     }
+    const head = `<div class="section-title toggle ${open ? "" : "closed"}" data-action="hacs" role="button" aria-expanded="${open}">
+        ${svgIcon(ICONS.hacs)}${this._t("hacs")}
+        ${n ? `<span class="chip warn"><span class="dot"></span>${n}</span>` : ""}
+        <span class="count">${ext.length}</span>${check}${svgIcon(ICONS.chevron, "chevron")}
+      </div>`;
+    if (!open) return `<div class="hacs">${head}</div>`;
     const rows = ext.map((x) => {
       const ver = x.update ? `${esc(x.installed || "?")} → <b>${esc(x.latest || "?")}</b>` : esc(x.installed || "—");
       const status = x.update
@@ -925,7 +937,7 @@ class SystemMonitorCard extends SystemMonitorBase {
           ${status}${gh}
         </div>`;
     });
-    return `<div class="hacs">${head}${toolbar}<div class="exts">${rows.join("")}</div></div>`;
+    return `<div class="hacs">${head}${info}<div class="exts">${rows.join("")}</div></div>`;
   }
 
   _processes(sm) {
