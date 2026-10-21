@@ -77,6 +77,15 @@ const STRINGS = {
     procs_one: "1 process stopped",
     procs_many: "{n} processes stopped",
     integrations: "Integrations",
+    st_up_to_date: "Up to date",
+    st_update_one: "1 update",
+    st_updates: "{n} updates",
+    st_running: "Running",
+    st_stopped_one: "1 stopped",
+    st_stopped: "{n} stopped",
+    st_available: "Available",
+    st_unavailable_one: "1 unavailable",
+    st_unavailable: "{n} unavailable",
     wd_ok: "Integrations available",
     wd_one: "1 integration unavailable",
     wd_many: "{n} integrations unavailable",
@@ -142,6 +151,15 @@ const STRINGS = {
     procs_one: "1 processus arrêté",
     procs_many: "{n} processus arrêtés",
     integrations: "Intégrations",
+    st_up_to_date: "À jour",
+    st_update_one: "1 mise à jour",
+    st_updates: "{n} mises à jour",
+    st_running: "En marche",
+    st_stopped_one: "1 arrêté",
+    st_stopped: "{n} arrêtés",
+    st_available: "Disponibles",
+    st_unavailable_one: "1 indisponible",
+    st_unavailable: "{n} indisponibles",
     wd_ok: "Intégrations disponibles",
     wd_one: "1 intégration indisponible",
     wd_many: "{n} intégrations indisponibles",
@@ -734,19 +752,20 @@ class SystemMonitorBase extends HTMLElement {
         <div class="titles">
           <div class="name">${esc(c.title || "Home Assistant")}</div>
           <div class="sub">${esc(sub)}</div>
-          <div class="chips">${chip}${this._hacsChip()}${this._procsChip(sm)}${this._wdChip()}</div>
+          <div class="chips">${chip}</div>
         </div>
       </div>`;
   }
 
-  /** HACS status under the Home Assistant one: all extensions up to date, or how many have an update. */
-  _hacsChip() {
+  /** HACS status tile: all extensions up to date, or how many have an update. */
+  _hacsStat() {
     if (this._config.show_hacs === false) return "";
     const ext = discoverHacs(this._hass);
     if (!ext.length) return "";
     const n = ext.filter((x) => x.update).length;
     const text = n === 0 ? this._t("hacs_ok") : n === 1 ? this._t("hacs_updates_one") : this._t("hacs_updates").replace("{n}", n);
-    return `<span class="chip clickable ${n ? "warn" : "good"}" data-action="hacs"><span class="dot"></span>${esc(text)}</span>`;
+    const value = n === 0 ? this._t("st_up_to_date") : this._t(n === 1 ? "st_update_one" : "st_updates").replace("{n}", n);
+    return this._stat("hacs", ICONS.hacs, this._t("hacs"), value, n ? "warn" : "good", text);
   }
 
   /** Monitored processes that are stopped (process binary sensors off). */
@@ -768,23 +787,38 @@ class SystemMonitorBase extends HTMLElement {
     return this._procsOpen ?? ko;
   }
 
-  /** Processes status next to the Home Assistant one: all running, or how many are stopped. */
-  _procsChip(sm) {
+  /** Processes status tile: all running, or how many are stopped. */
+  _procsStat(sm) {
     if (this._config.show_processes === false || !Object.keys(sm.procs).length) return "";
     const n = this._stopped(sm).length;
     const text = n === 0 ? this._t("procs_ok") : n === 1 ? this._t("procs_one") : this._t("procs_many").replace("{n}", n);
-    return `<span class="chip clickable ${n ? "crit" : "good"}" data-action="procs"><span class="dot"></span>${esc(text)}</span>`;
+    const value = n === 0 ? this._t("st_running") : this._t(n === 1 ? "st_stopped_one" : "st_stopped").replace("{n}", n);
+    return this._stat("procs", ICONS.process, this._t("processes"), value, n ? "crit" : "good", text);
   }
 
-  /** Integration Watchdog status under the HACS one: all integrations available, or how many are not. */
-  _wdChip() {
+  /** Integration Watchdog status tile: all integrations available, or how many are not. */
+  _wdStat() {
     if (this._config.show_watchdog === false) return "";
     const wd = discoverWatchdog(this._hass);
     const st = this._s(wd.unavailable);
     if (!st) return "";
     const n = (st.attributes.integrations || []).length;
     const text = n === 0 ? this._t("wd_ok") : n === 1 ? this._t("wd_one") : this._t("wd_many").replace("{n}", n);
-    return `<span class="chip clickable ${n ? "crit" : "good"}" data-action="wd"><span class="dot"></span>${esc(text)}</span>`;
+    const value = n === 0 ? this._t("st_available") : this._t(n === 1 ? "st_unavailable_one" : "st_unavailable").replace("{n}", n);
+    return this._stat("wd", ICONS.watchdog, this._t("integrations"), value, n ? "crit" : "good", text);
+  }
+
+  /** A status tile of the row under the header: section icon and name, status in its color; a click folds or unfolds that section. */
+  _stat(action, icon, label, value, cls, title) {
+    return `<div class="stat clickable ${cls}" data-action="${action}" role="button" tabindex="0" title="${esc(title)}" aria-label="${esc(title)}">
+        <div class="k">${svgIcon(icon)}<span>${esc(label)}</span></div><div class="v">${esc(value)}</div>
+      </div>`;
+  }
+
+  /** Overall statuses (HACS, processes, integrations), side by side under the header. */
+  _statusRow(sm) {
+    const stats = [this._hacsStat(), this._procsStat(sm), this._wdStat()].filter(Boolean);
+    return stats.length ? `<div class="stats" style="--n:${stats.length}">${stats.join("")}</div>` : "";
   }
 
   _noSm() {
@@ -808,7 +842,14 @@ const ring = (p) => {
 
 const FULL_STYLE = `
   .logo { height: 64px; width: 64px; }
-  .titles .chips { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; margin-top: 6px; }
+  .titles .chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .stats { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); gap: 8px; padding: 0 16px 16px; }
+  .stat { display: flex; flex-direction: column; gap: 2px; padding: 8px 10px; border-radius: 10px; min-width: 0;
+          background: color-mix(in srgb, var(--c, var(--sm-ok)) 12%, var(--secondary-background-color, transparent)); }
+  .stat .k { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--secondary-text-color); min-width: 0; }
+  .stat .k span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .stat .k .icon { width: 16px; height: 16px; color: var(--c, var(--sm-ok)); }
+  .stat .v { font-size: 14px; font-weight: 500; color: var(--c, var(--sm-ok)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .section-title.toggle { cursor: pointer; margin-bottom: 0; user-select: none; }
   .section-title .count { margin-left: auto; text-transform: none; letter-spacing: 0; font-weight: 400; }
   .section-title .chevron { transition: transform .2s ease; }
@@ -916,6 +957,7 @@ class SystemMonitorCard extends SystemMonitorBase {
     return `<style>${BASE_STYLE}${FULL_STYLE}</style>
       <ha-card>
         ${this._header(sm)}
+        ${this._statusRow(sm)}
         <div class="content">${parts.filter(Boolean).join("")}</div>
       </ha-card>`;
   }

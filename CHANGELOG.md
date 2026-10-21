@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.0
+
+### 💄 Style
+
+- The HACS, processes and integrations statuses leave the header for a row of tiles under it, side by side and the same width: section icon and name, then the status in green, orange or red. Click a tile to unfold its section. The Home Assistant Core / OS update stays next to the logo, and the header is no longer stretched by a column of badges.
+
 ## 1.7.1
 
 ### 💄 Style

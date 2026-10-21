@@ -26,9 +26,9 @@ The cards are built on top of the core [System Monitor integration](https://www.
 - Home Assistant Core and OS versions, with an orange badge when an update is available
 - Network download / upload rates and totals, per interface (virtual interfaces such as `docker0` or `hassio` are hidden)
 - Storage: every monitored mount point and the swap, with used space
-- Monitored processes, green when running and red when stopped: folded while they all run, unfolded as soon as one stops, with their overall status in the header, just before the integrations one
-- **HACS extensions**: a collapsible list of every repository downloaded with HACS, with its logo, version, update status and a GitHub button, plus a **Check for updates** button that runs on the server through [HACS Refresh](https://github.com/juju35/ha-hacs-refresh); the overall HACS status sits under the Home Assistant one
-- **Unavailable integrations**: with [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog), a collapsible list of the integrations whose entities are all unavailable, with their logo, since when, how many times they were reloaded and whether the watchdog gave up, plus the last reload and a **Check now** button; the overall status sits under the HACS one
+- Monitored processes, green when running and red when stopped: folded while they all run, unfolded as soon as one stops, with their overall status in the status row
+- **HACS extensions**: a collapsible list of every repository downloaded with HACS, with its logo, version, update status and a GitHub button, plus a **Check for updates** button that runs on the server through [HACS Refresh](https://github.com/juju35/ha-hacs-refresh); its overall status sits in the status row
+- **Unavailable integrations**: with [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog), a collapsible list of the integrations whose entities are all unavailable, with their logo, since when, how many times they were reloaded and whether the watchdog gave up, plus the last reload and a **Check now** button; its overall status sits in the status row
 - Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature)
 - Click any value to open its Home Assistant history (more-info dialog)
 - Visual editor in the dashboard UI for both cards (no YAML needed)
@@ -129,9 +129,9 @@ language: fr
 | `show_system` | full | `true` | CPU, RAM, disk and temperature gauges, uptime, load, IP address |
 | `show_network` | both | `true` | Network download / upload |
 | `show_storage` | both | `true` | Full card: mount points and swap. Mini card: disk bar |
-| `show_processes` | full | `true` | Monitored processes and their overall status in the header |
-| `show_hacs` | full | `true` | HACS extensions list and HACS status under the Home Assistant one |
-| `show_watchdog` | full | `true` | Unavailable integrations list and their status under the HACS one (needs Integration Watchdog) |
+| `show_processes` | full | `true` | Monitored processes and their status tile |
+| `show_hacs` | full | `true` | HACS extensions list and their status tile |
+| `show_watchdog` | full | `true` | Unavailable integrations list and their status tile (needs Integration Watchdog) |
 | `interface` | both | All physical interfaces | Network interface to display (e.g. `eth0`, `enp0s3`) |
 | `language` | both | Auto | Force language: `fr` or `en` (auto-detects from HA settings) |
 
@@ -149,13 +149,17 @@ The cards read the entity registry of Home Assistant and keep the entities of th
 
 The Core and OS versions come from the `update.home_assistant_core_*` and `update.home_assistant_operating_system_*` entities when they exist, otherwise from the running Home Assistant version.
 
+### Status row
+
+Under the header, a row of tiles gives the overall status of each section: **HACS** (up to date or the number of updates), **Processes** (running or the number stopped) and **Integrations** (available or the number unavailable), green when all is well, orange or red otherwise. Click a tile to unfold its section. The Home Assistant Core / OS update stays next to the logo. Tiles of hidden or missing sections are left out.
+
 ### Processes
 
-The processes section is folded while every monitored process runs, and unfolds by itself as soon as one stops. Its title shows the number of processes, and the number stopped in red. The header shows the overall status after the HACS one and before the integrations one: "Processes running" or the number stopped; click it, or the section title, to fold or unfold the list. That choice holds until the status changes.
+The processes section is folded while every monitored process runs, and unfolds by itself as soon as one stops. Its title shows the number of processes, and the number stopped in red. Its tile in the status row shows "Running" or the number stopped; click it, or the section title, to fold or unfold the list. That choice holds until the status changes.
 
 ### HACS extensions
 
-HACS creates an update entity for every repository it downloaded. The card lists them with their name and category (from the HACS device), installed and latest version, and the GitHub repository (from the release URL). The list is folded by default: click the **HACS** section, or the HACS status in the header, to unfold it. Click a line to open its update dialog (release notes, install), its refresh button to check that extension alone for updates (needs HACS Refresh 0.2.0 or later), or the GitHub button to open the repository.
+HACS creates an update entity for every repository it downloaded. The card lists them with their name and category (from the HACS device), installed and latest version, and the GitHub repository (from the release URL). The list is folded by default: click the **HACS** section, or its tile in the status row, to unfold it. Click a line to open its update dialog (release notes, install), its refresh button to check that extension alone for updates (needs HACS Refresh 0.2.0 or later), or the GitHub button to open the repository.
 
 Logos are loaded dynamically, best source first:
 
@@ -168,7 +172,7 @@ Logos are loaded dynamically, best source first:
 
 ### Unavailable integrations
 
-When the [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog) integration is set up, the card reads its sensors: a chip under the HACS status says whether every integration is available, and the **Integrations** section lists those whose entities are all unavailable, with the time they became unavailable, the number of reloads done by the watchdog, and **Given up** once it stopped reloading one. The section shows the last reload (in red when it failed) and the time of the last check. Click a line to open the integration page, the refresh button next to the title to check the integrations now (it presses the watchdog's **Check now** button), or the last reload to open its history. Like the HACS list, the section is folded by default and folds again on a click elsewhere.
+When the [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog) integration is set up, the card reads its sensors: its tile in the status row says whether every integration is available, and the **Integrations** section lists those whose entities are all unavailable, with the time they became unavailable, the number of reloads done by the watchdog, and **Given up** once it stopped reloading one. The section shows the last reload (in red when it failed) and the time of the last check. Click a line to open the integration page, the refresh button next to the title to check the integrations now (it presses the watchdog's **Check now** button), or the last reload to open its history. Like the HACS list, the section is folded by default and folds again on a click elsewhere.
 
 Thresholds:
 
