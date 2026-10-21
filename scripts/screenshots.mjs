@@ -48,6 +48,7 @@ const shots = [
   { file: "card", type: "system-monitor-card", theme: "light", width: 460, config: {} },
   { file: "card-dark", type: "system-monitor-card", theme: "dark", width: 460, config: { language: "fr" }, update: true },
   { file: "card-hacs", type: "system-monitor-card", theme: "light", width: 460, config: { show_system: false, show_network: false, show_storage: false, show_processes: false }, hacs: true, open: true },
+  { file: "card-watchdog", type: "system-monitor-card", theme: "light", width: 460, config: { show_system: false, show_network: false, show_storage: false, show_processes: false, show_hacs: false }, open: true, action: "wd" },
   { file: "mini-card", type: "system-monitor-mini-card", theme: "light", width: 380, config: {} },
   { file: "mini-card-dark", type: "system-monitor-mini-card", theme: "dark", width: 380, config: { language: "fr" }, update: true },
 ];
@@ -79,7 +80,7 @@ for (const s of shots) {
   await page.addScriptTag({ content: HA_CARD });
   await page.addScriptTag({ content: cardJs });
   await page.evaluate(
-    ({ type, config, states, entities, devices, open }) => {
+    ({ type, config, states, entities, devices, open, action }) => {
       const el = document.createElement(type);
       el.setConfig({ type: `custom:${type}`, ...config });
       el.hass = {
@@ -87,7 +88,7 @@ for (const s of shots) {
         user: { is_admin: true }, services: { hacs_refresh: { check_updates: {}, check_repository: {} } }, callWS: async () => { throw new Error("offline"); },
       };
       document.getElementById("root").appendChild(el);
-      if (open) el.shadowRoot.querySelector('[data-action="hacs"]').click();
+      if (open) el.shadowRoot.querySelector(`.section-title[data-action="${action}"]`).click();
     },
     {
       type: s.type,
@@ -96,6 +97,7 @@ for (const s of shots) {
       entities,
       devices,
       open: s.open,
+      action: s.action || "hacs",
     }
   );
   await page.waitForTimeout(800);

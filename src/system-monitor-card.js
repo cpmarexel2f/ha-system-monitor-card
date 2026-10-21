@@ -28,6 +28,7 @@ const ICONS = {
   hacs: "M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L10.11,5.22L16,8.61L17.96,7.5L12,4.15M6.04,7.5L12,10.85L13.96,9.75L8.08,6.35L6.04,7.5M5,15.91L11,19.29V12.58L5,9.21V15.91M19,15.91V9.21L13,12.58V19.29L19,15.91Z",
   github: "M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z",
   refresh: "M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z",
+  watchdog: "M10,17L6,13L7.41,11.59L10,14.17L16.59,7.58L18,9M12,1L3,5V11C3,16.55 6.84,21.74 12,23C17.16,21.74 21,16.55 21,11V5L12,1Z",
   chevron: "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z",
   // Fallbacks per HACS category when no logo can be loaded.
   integration: "M22,13.5C22,15.26 20.7,16.72 19,16.96V20A2,2 0 0,1 17,22H13.2V21.7A2.7,2.7 0 0,0 10.5,19C9,19 7.8,20.21 7.8,21.7V22H4A2,2 0 0,1 2,20V16.2H2.3C3.79,16.2 5,15 5,13.5C5,12 3.79,10.8 2.3,10.8H2V7A2,2 0 0,1 4,5H7.04C7.28,3.3 8.74,2 10.5,2C12.26,2 13.72,3.3 13.96,5H17A2,2 0 0,1 19,7V10.04C20.7,10.28 22,11.74 22,13.5M17,15H18.5A1.5,1.5 0 0,0 20,13.5A1.5,1.5 0 0,0 18.5,12H17V7H12V5.5A1.5,1.5 0 0,0 10.5,4A1.5,1.5 0 0,0 9,5.5V7H4V9.12C5.76,9.8 7,11.5 7,13.5C7,15.5 5.75,17.2 4,17.88V20H6.12C6.8,18.25 8.5,17 10.5,17C12.5,17 14.2,18.25 14.88,20H17V15Z",
@@ -72,6 +73,21 @@ const STRINGS = {
     needs_refresh: "Install HACS Refresh to check every extension for updates from Home Assistant.",
     github: "Open on GitHub",
     check_ext: "Check this extension for updates",
+    integrations: "Integrations",
+    wd_ok: "Integrations available",
+    wd_one: "1 integration unavailable",
+    wd_many: "{n} integrations unavailable",
+    wd_check: "Check the integrations now",
+    wd_none: "Every integration is available.",
+    wd_since: "Unavailable {t}",
+    wd_reloads_one: "1 reload",
+    wd_reloads: "{n} reloads",
+    wd_unavailable: "Unavailable",
+    wd_gave_up: "Given up",
+    wd_last_reload: "Last reload: {name} {t}",
+    wd_last_reload_failed: "Last reload failed: {name} {t}",
+    wd_last_check: "Checked {t}",
+    wd_open: "Open the integration",
     // Editor
     title: "Title (optional, defaults to Home Assistant)",
     show_image: "Show Home Assistant logo",
@@ -80,6 +96,7 @@ const STRINGS = {
     show_storage: "Show storage",
     show_processes: "Show processes",
     show_hacs: "Show HACS extensions",
+    show_watchdog: "Show unavailable integrations (Integration Watchdog)",
     interface: "Network interface (optional, all by default)",
     language: "Language",
     lang_auto: "Automatic",
@@ -118,6 +135,21 @@ const STRINGS = {
     needs_refresh: "Installez HACS Refresh pour rechercher les mises à jour de toutes les extensions depuis Home Assistant.",
     github: "Ouvrir sur GitHub",
     check_ext: "Rechercher les mises à jour de cette extension",
+    integrations: "Intégrations",
+    wd_ok: "Intégrations disponibles",
+    wd_one: "1 intégration indisponible",
+    wd_many: "{n} intégrations indisponibles",
+    wd_check: "Vérifier les intégrations maintenant",
+    wd_none: "Toutes les intégrations sont disponibles.",
+    wd_since: "Indisponible {t}",
+    wd_reloads_one: "1 rechargement",
+    wd_reloads: "{n} rechargements",
+    wd_unavailable: "Indisponible",
+    wd_gave_up: "Abandonnée",
+    wd_last_reload: "Dernier rechargement : {name} {t}",
+    wd_last_reload_failed: "Échec du dernier rechargement : {name} {t}",
+    wd_last_check: "Vérifié {t}",
+    wd_open: "Ouvrir l'intégration",
     title: "Titre (facultatif, Home Assistant par défaut)",
     show_image: "Afficher le logo Home Assistant",
     show_system: "Afficher le système (CPU, RAM, disque, température)",
@@ -125,6 +157,7 @@ const STRINGS = {
     show_storage: "Afficher le stockage",
     show_processes: "Afficher les processus",
     show_hacs: "Afficher les extensions HACS",
+    show_watchdog: "Afficher les intégrations indisponibles (Integration Watchdog)",
     interface: "Interface réseau (facultatif, toutes par défaut)",
     language: "Langue",
     lang_auto: "Automatique",
@@ -425,6 +458,26 @@ const discoverRefresh = (hass) => {
   return out;
 };
 
+// ---------------------------------------------------------------------------
+// Integration Watchdog
+// ---------------------------------------------------------------------------
+
+/** Entities of the Integration Watchdog integration, which reloads the integrations whose entities are all unavailable. */
+const discoverWatchdog = (hass) => {
+  const out = {};
+  const keys = { unavailable: "unavailable", unavailable_integrations: "unavailable", last_reload: "lastReload", last_check: "lastCheck" };
+  for (const e of Object.values(hass.entities || {})) {
+    if (e.platform !== "integration_watchdog" || !hass.states[e.entity_id]) continue;
+    if (e.entity_id.startsWith("button.")) out.button = e.entity_id;
+    else if (e.entity_id.startsWith("sensor.")) {
+      // Translation key, else the end of the English entity id.
+      const key = keys[e.translation_key] || Object.entries(keys).find(([k]) => e.entity_id.endsWith(`_${k}`))?.[1];
+      if (key) out[key] ??= e.entity_id;
+    }
+  }
+  return out;
+};
+
 const relTime = (iso, locale) => {
   const sec = (Date.parse(iso) - Date.now()) / 1000;
   if (!Number.isFinite(sec)) return "";
@@ -469,6 +522,7 @@ class SystemMonitorBase extends HTMLElement {
     this.attachShadow({ mode: "open" });
     this._html = "";
     this._hacsOpen = false;
+    this._wdOpen = false;
     this._imgFailed = new Set();
     this.shadowRoot.addEventListener("click", (ev) => {
       const path = ev.composedPath();
@@ -477,9 +531,12 @@ class SystemMonitorBase extends HTMLElement {
       const action = path.find((n) => n.dataset && n.dataset.action);
       if (action) {
         if (action.dataset.action === "hacs") this._hacsOpen = !this._hacsOpen;
+        if (action.dataset.action === "wd") this._wdOpen = !this._wdOpen;
         const enabled = action.getAttribute("aria-disabled") !== "true";
         if (action.dataset.action === "hacs-check" && enabled) this._checkHacs();
         if (action.dataset.action === "hacs-check-ext" && enabled) this._checkExt(action.dataset.target);
+        if (action.dataset.action === "wd-check" && enabled) this._checkWatchdog();
+        if (action.dataset.action === "nav") this._navigate(action.dataset.path);
         this._update();
         return;
       }
@@ -513,11 +570,12 @@ class SystemMonitorBase extends HTMLElement {
   connectedCallback() {
     // The brands access token rotates: refresh it before it expires.
     this._tokenTimer = setInterval(() => this._fetchBrandsToken(true), 20 * 60 * 1000);
-    // A click elsewhere on the page folds the HACS list (as in ha-carburants-france). A click, not a
-    // pointerdown: folding on press would shift the layout under the pointer before the click.
+    // A click elsewhere on the page folds the HACS and integrations lists (as in ha-carburants-france).
+    // A click, not a pointerdown: folding on press would shift the layout under the pointer before the click.
     this._onOutside ??= (ev) => {
-      if (!this._hacsOpen || ev.composedPath().includes(this)) return;
+      if ((!this._hacsOpen && !this._wdOpen) || ev.composedPath().includes(this)) return;
       this._hacsOpen = false;
+      this._wdOpen = false;
       this._update();
     };
     document.addEventListener("click", this._onOutside, true);
@@ -591,6 +649,26 @@ class SystemMonitorBase extends HTMLElement {
     this._update();
   }
 
+  /** Presses the Integration Watchdog button: it checks the integrations now and reloads those that are due. */
+  async _checkWatchdog() {
+    const wd = discoverWatchdog(this._hass);
+    if (!wd.button) return;
+    this._wdError = null;
+    try {
+      await this._hass.callService("button", "press", { entity_id: wd.button });
+    } catch (e) {
+      this._wdError = e?.message || String(e);
+    }
+    this._update();
+  }
+
+  /** Opens a Home Assistant page, as a link inside the frontend does. */
+  _navigate(path) {
+    if (!path) return;
+    history.pushState(null, "", path);
+    window.dispatchEvent(new CustomEvent("location-changed", { detail: { replace: false } }));
+  }
+
   set hass(hass) {
     this._hass = hass;
     this._fetchBrandsToken();
@@ -649,7 +727,7 @@ class SystemMonitorBase extends HTMLElement {
         <div class="titles">
           <div class="name">${esc(c.title || "Home Assistant")}</div>
           <div class="sub">${esc(sub)}</div>
-          <div class="chips">${chip}${this._hacsChip()}</div>
+          <div class="chips">${chip}${this._hacsChip()}${this._wdChip()}</div>
         </div>
       </div>`;
   }
@@ -662,6 +740,17 @@ class SystemMonitorBase extends HTMLElement {
     const n = ext.filter((x) => x.update).length;
     const text = n === 0 ? this._t("hacs_ok") : n === 1 ? this._t("hacs_updates_one") : this._t("hacs_updates").replace("{n}", n);
     return `<span class="chip clickable ${n ? "warn" : "good"}" data-action="hacs"><span class="dot"></span>${esc(text)}</span>`;
+  }
+
+  /** Integration Watchdog status under the HACS one: all integrations available, or how many are not. */
+  _wdChip() {
+    if (this._config.show_watchdog === false) return "";
+    const wd = discoverWatchdog(this._hass);
+    const st = this._s(wd.unavailable);
+    if (!st) return "";
+    const n = (st.attributes.integrations || []).length;
+    const text = n === 0 ? this._t("wd_ok") : n === 1 ? this._t("wd_one") : this._t("wd_many").replace("{n}", n);
+    return `<span class="chip clickable ${n ? "crit" : "good"}" data-action="wd"><span class="dot"></span>${esc(text)}</span>`;
   }
 
   _noSm() {
@@ -789,6 +878,7 @@ class SystemMonitorCard extends SystemMonitorBase {
     if (c.show_storage !== false) parts.push(this._storage(sm));
     if (c.show_processes !== false) parts.push(this._processes(sm));
     if (c.show_hacs !== false) parts.push(this._hacs());
+    if (c.show_watchdog !== false) parts.push(this._watchdog());
     return `<style>${BASE_STYLE}${FULL_STYLE}</style>
       <ha-card>
         ${this._header(sm)}
@@ -978,6 +1068,58 @@ class SystemMonitorCard extends SystemMonitorBase {
         </div>`;
     });
     return `<div class="hacs">${head}${info}<div class="exts">${rows.join("")}</div></div>`;
+  }
+
+  /** Integrations whose entities are all unavailable, from Integration Watchdog. */
+  _watchdog() {
+    const wd = discoverWatchdog(this._hass);
+    const st = this._s(wd.unavailable);
+    if (!st) return "";
+    const items = st.attributes.integrations || [];
+    const open = this._wdOpen;
+    const locale = lang(this._hass, this._config);
+    let check = "";
+    if (wd.button) {
+      const busy = this._s(wd.button)?.state === "unavailable";
+      const title = this._t("wd_check");
+      check = `<span class="btn btn-check" role="button" tabindex="0" data-action="wd-check" title="${esc(title)}" aria-label="${esc(title)}" aria-disabled="${busy}">
+          ${svgIcon(ICONS.refresh, busy ? "spin" : "")}
+        </span>`;
+    }
+    const head = `<div class="section-title toggle ${open ? "" : "closed"}" data-action="wd" role="button" aria-expanded="${open}">
+        ${svgIcon(ICONS.watchdog)}${this._t("integrations")}
+        ${items.length ? `<span class="chip crit"><span class="dot"></span>${items.length}</span>` : ""}${check}
+        <span class="count"></span>${svgIcon(ICONS.chevron, "chevron")}
+      </div>`;
+    if (!open) return `<div class="hacs wd">${head}</div>`;
+    const info = [];
+    const reload = this._s(wd.lastReload);
+    if (reload && !["unknown", "unavailable"].includes(reload.state)) {
+      const key = reload.attributes.success === false ? "wd_last_reload_failed" : "wd_last_reload";
+      const text = this._t(key).replace("{name}", reload.attributes.title || reload.attributes.domain || "").replace("{t}", relTime(reload.state, locale));
+      info.push(`<span class="muted last clickable ${reload.attributes.success === false ? "err" : ""}" data-entity="${reload.entity_id}">${esc(text)}</span>`);
+    }
+    const last = this._s(wd.lastCheck);
+    if (last && !["unknown", "unavailable"].includes(last.state))
+      info.push(`<span class="muted last clickable" data-entity="${last.entity_id}">${esc(this._t("wd_last_check").replace("{t}", relTime(last.state, locale)))}</span>`);
+    if (this._wdError) info.push(`<span class="err">${esc(this._t("check_failed").replace("{e}", this._wdError))}</span>`);
+    const rows = items.map((x) => {
+      const reloads = x.reloads ? (x.reloads === 1 ? this._t("wd_reloads_one") : this._t("wd_reloads").replace("{n}", x.reloads)) : "";
+      // The domain only when the title doesn't already say it.
+      const domain = String(x.title || "").toLowerCase().replace(/[^a-z0-9]/g, "") === String(x.domain).replace(/_/g, "") ? "" : x.domain;
+      const sub = [domain, x.since ? this._t("wd_since").replace("{t}", relTime(x.since, locale)) : "", reloads].filter(Boolean).join(" · ");
+      const status = x.gave_up
+        ? `<span class="chip crit"><span class="dot"></span>${esc(this._t("wd_gave_up"))}</span>`
+        : `<span class="chip warn"><span class="dot"></span>${esc(this._t("wd_unavailable"))}</span>`;
+      const path = `/config/integrations/integration/${encodeURIComponent(x.domain)}`;
+      return `<div class="ext clickable" data-action="nav" data-path="${esc(path)}" title="${esc(this._t("wd_open"))}">
+          ${this._logo({ domain: x.domain, category: "integration" })}
+          <div class="grow"><div class="ext-name">${esc(x.title || x.domain)}</div><div class="ext-ver">${esc(sub)}</div></div>
+          ${status}
+        </div>`;
+    });
+    const body = rows.length ? `<div class="exts">${rows.join("")}</div>` : `<div class="toolbar"><span class="muted last">${esc(this._t("wd_none"))}</span></div>`;
+    return `<div class="hacs wd">${head}${info.length ? `<div class="toolbar">${info.join("")}</div>` : ""}${body}</div>`;
   }
 
   _processes(sm) {
@@ -1175,7 +1317,7 @@ class SystemMonitorEditorBase extends HTMLElement {
 
 class SystemMonitorCardEditor extends SystemMonitorEditorBase {
   static get toggles() {
-    return ["show_system", "show_network", "show_storage", "show_processes", "show_hacs"];
+    return ["show_system", "show_network", "show_storage", "show_processes", "show_hacs", "show_watchdog"];
   }
 }
 

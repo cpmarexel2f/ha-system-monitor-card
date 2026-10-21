@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0
+
+### ✨ Features
+
+- **Integrations** section with [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog): the integrations whose entities are all unavailable, with their logo, since when, the number of reloads and **Given up** when the watchdog stopped reloading one; the last reload and the last check; a **Check now** button next to the title. Click a line to open the integration page. Folded by default, like the HACS list.
+- Integrations status under the HACS one in the header: "Integrations available" or the number of unavailable integrations; click it to unfold the list.
+- New option `show_watchdog` (also in the visual editor). The section is only shown when Integration Watchdog is set up.
+
 ## 1.5.1
 
 ### 🧹 Maintenance

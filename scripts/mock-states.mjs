@@ -101,3 +101,24 @@ for (const [id, state, attributes] of [
   states[id] = { entity_id: id, state, attributes };
   entities[id] = { entity_id: id, platform: "hacs_refresh", device_id: "hacs_refresh" };
 }
+
+// Integration Watchdog: integrations whose entities are all unavailable.
+const ago = (min) => new Date(Date.now() - min * 60 * 1000).toISOString();
+for (const [id, key, state, attributes] of [
+  ["button.integration_watchdog_check_now", null, "unknown", {}],
+  ["sensor.integration_watchdog_unavailable_integrations", "unavailable", "2", {
+    state_class: "measurement",
+    integrations: [
+      { domain: "roborock", title: "Roborock", entry_id: "e1", since: ago(22), reloads: 1, gave_up: false },
+      { domain: "tuya", title: "Tuya", entry_id: "e2", since: ago(95), reloads: 3, gave_up: true },
+    ],
+    ignored: ["zha"],
+  }],
+  ["sensor.integration_watchdog_last_reload", "last_reload", ago(7), {
+    device_class: "timestamp", domain: "roborock", title: "Roborock", entry_id: "e1", success: true, reloads: 4,
+  }],
+  ["sensor.integration_watchdog_last_check", "last_check", ago(2), { device_class: "timestamp" }],
+]) {
+  states[id] = { entity_id: id, state, attributes };
+  entities[id] = { entity_id: id, platform: "integration_watchdog", device_id: "integration_watchdog", ...(key ? { translation_key: key } : {}) };
+}

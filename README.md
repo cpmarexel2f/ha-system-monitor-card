@@ -28,6 +28,7 @@ The cards are built on top of the core [System Monitor integration](https://www.
 - Storage: every monitored mount point and the swap, with used space
 - Monitored processes, green when running and red when stopped
 - **HACS extensions**: a collapsible list of every repository downloaded with HACS, with its logo, version, update status and a GitHub button, plus a **Check for updates** button that runs on the server through [HACS Refresh](https://github.com/juju35/ha-hacs-refresh); the overall HACS status sits under the Home Assistant one
+- **Unavailable integrations**: with [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog), a collapsible list of the integrations whose entities are all unavailable, with their logo, since when, how many times they were reloaded and whether the watchdog gave up, plus the last reload and a **Check now** button; the overall status sits under the HACS one
 - Colors turn orange / red when a threshold is crossed (CPU, RAM, disk, temperature)
 - Click any value to open its Home Assistant history (more-info dialog)
 - Visual editor in the dashboard UI for both cards (no YAML needed)
@@ -46,6 +47,7 @@ Most of its sensors are disabled by default: open the **System Monitor** device 
 | Network | Network throughput in / out, Network in / out (totals) |
 | Storage | Disk use + Disk free for each mount point, Swap use + Swap free |
 | Processes | Process binary sensors (configured in the integration options) |
+| Integrations | The [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog) integration. Without it the section is not shown |
 | HACS | Nothing for the list: the update entities HACS creates for downloaded repositories are used as is. The **Check for updates** button needs the [HACS Refresh](https://github.com/juju35/ha-hacs-refresh) integration |
 
 Sections and gauges without any enabled sensor are simply not displayed.
@@ -103,6 +105,7 @@ show_network: true
 show_storage: true
 show_processes: true
 show_hacs: true
+show_watchdog: true
 interface: eth0
 language: fr
 ```
@@ -128,6 +131,7 @@ language: fr
 | `show_storage` | both | `true` | Full card: mount points and swap. Mini card: disk bar |
 | `show_processes` | full | `true` | Monitored processes |
 | `show_hacs` | full | `true` | HACS extensions list and HACS status under the Home Assistant one |
+| `show_watchdog` | full | `true` | Unavailable integrations list and their status under the HACS one (needs Integration Watchdog) |
 | `interface` | both | All physical interfaces | Network interface to display (e.g. `eth0`, `enp0s3`) |
 | `language` | both | Auto | Force language: `fr` or `en` (auto-detects from HA settings) |
 
@@ -137,7 +141,7 @@ language: fr
 |---|---|
 | ![card](screenshots/card.png) | ![card dark](screenshots/card-dark.png) |
 | ![mini card](screenshots/mini-card.png) | ![mini card dark](screenshots/mini-card-dark.png) |
-| ![HACS extensions](screenshots/card-hacs.png) | |
+| ![HACS extensions](screenshots/card-hacs.png) | ![Unavailable integrations](screenshots/card-watchdog.png) |
 
 ## How it works
 
@@ -157,6 +161,10 @@ Logos are loaded dynamically, best source first:
 4. An icon for the HACS category (integration, dashboard, theme…)
 
 **Check for updates** (the refresh button next to the HACS section title, visible even while the list is folded) presses the button of the [HACS Refresh](https://github.com/juju35/ha-hacs-refresh) integration: Home Assistant asks HACS to fetch every downloaded repository again from GitHub, in the background, and the card shows the progress and the time of the last check from HACS Refresh's sensors. The check goes on if you leave the page, and HACS Refresh can also check at an interval set in its options. Without HACS Refresh, the button is hidden and the unfolded list shows a link to install it.
+
+### Unavailable integrations
+
+When the [Integration Watchdog](https://github.com/juju35/ha-integration-watchdog) integration is set up, the card reads its sensors: a chip under the HACS status says whether every integration is available, and the **Integrations** section lists those whose entities are all unavailable, with the time they became unavailable, the number of reloads done by the watchdog, and **Given up** once it stopped reloading one. The section shows the last reload (in red when it failed) and the time of the last check. Click a line to open the integration page, the refresh button next to the title to check the integrations now (it presses the watchdog's **Check now** button), or the last reload to open its history. Like the HACS list, the section is folded by default and folds again on a click elsewhere.
 
 Thresholds:
 
