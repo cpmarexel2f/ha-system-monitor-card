@@ -4,6 +4,9 @@
 
 ### Changes
 - HACS list: a search field at the top of the list filters the extensions as you type (by name or GitHub repository, ignoring case and accents). Escape clears it, and folding the list clears it too.
+- Screenshots updated: the HACS list with its search field.
+
+![HACS list with the search field](https://raw.githubusercontent.com/juju35/ha-system-monitor-card/v1.12.0/screenshots/card-hacs.png)
 
 ## 1.11.2
 
