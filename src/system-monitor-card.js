@@ -27,6 +27,7 @@ const ICONS = {
   swap: "M21,9L17,5V8H10V10H17V13M7,11L3,15L7,19V16H14V14H7V11Z",
   hacs: "M21,16.5C21,16.88 20.79,17.21 20.47,17.38L12.57,21.82C12.41,21.94 12.21,22 12,22C11.79,22 11.59,21.94 11.43,21.82L3.53,17.38C3.21,17.21 3,16.88 3,16.5V7.5C3,7.12 3.21,6.79 3.53,6.62L11.43,2.18C11.59,2.06 11.79,2 12,2C12.21,2 12.41,2.06 12.57,2.18L20.47,6.62C20.79,6.79 21,7.12 21,7.5V16.5M12,4.15L10.11,5.22L16,8.61L17.96,7.5L12,4.15M6.04,7.5L12,10.85L13.96,9.75L8.08,6.35L6.04,7.5M5,15.91L11,19.29V12.58L5,9.21V15.91M19,15.91V9.21L13,12.58V19.29L19,15.91Z",
   github: "M12,2A10,10 0 0,0 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12A10,10 0 0,0 12,2Z",
+  close: "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z",
   search: "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z",
   refresh: "M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z",
   download: "M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z",
@@ -76,6 +77,7 @@ const STRINGS = {
     github: "Open on GitHub",
     check_ext: "Check this extension for updates",
     search_ext: "Search extensions",
+    clear_search: "Clear the search",
     no_match: "No matching extension",
     install_all: "Install all updates ({n})",
     install_all_confirm: "Install {n} HACS updates?",
@@ -158,6 +160,7 @@ const STRINGS = {
     github: "Ouvrir sur GitHub",
     check_ext: "Rechercher les mises à jour de cette extension",
     search_ext: "Rechercher une extension",
+    clear_search: "Effacer la recherche",
     no_match: "Aucune extension trouvée",
     install_all: "Installer toutes les mises à jour ({n})",
     install_all_confirm: "Installer {n} mises à jour HACS ?",
@@ -583,6 +586,12 @@ class SystemMonitorBase extends HTMLElement {
           if (!this._hacsOpen) this._hacsQuery = "";
         }
         if (action.dataset.action === "wd") this._wdOpen = !this._wdOpen;
+        if (action.dataset.action === "hacs-clear") {
+          this._hacsQuery = "";
+          this._update();
+          this.shadowRoot.querySelector('[data-search="hacs"]')?.focus();
+          return;
+        }
         // With a process stopped, the list stays unfolded.
         if (action.dataset.action === "procs" && !this._procsKo()) this._procsOpen = !this._procsOpen;
         const enabled = action.getAttribute("aria-disabled") !== "true";
@@ -966,6 +975,10 @@ const FULL_STYLE = `
   .hacs .search .icon { width: 16px; height: 16px; }
   .hacs .search input { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 13px; color: var(--primary-text-color); }
   .hacs .search input::placeholder { color: var(--secondary-text-color); }
+  .hacs .search input::-webkit-search-cancel-button { display: none; }
+  .hacs .search .clear { flex: none; width: 24px; height: 24px; margin-right: -4px; display: flex; align-items: center; justify-content: center;
+                         border-radius: 50%; cursor: pointer; color: var(--secondary-text-color); }
+  .hacs .search .clear:hover { background: var(--divider-color, rgba(127,127,127,.25)); color: var(--primary-text-color); }
   .exts .empty { padding: 8px 0; font-size: 13px; }
   .ext { display: flex; align-items: center; gap: 10px; padding: 4px 0; font-size: 13px; }
   .ext + .ext { border-top: 1px solid var(--divider-color, rgba(127,127,127,.25)); }
@@ -1234,7 +1247,11 @@ class SystemMonitorCard extends SystemMonitorBase {
     const shown = query ? ext.filter((x) => fold(`${x.name} ${x.repo || ""}`).includes(query)) : ext;
     const search = `<label class="search">${svgIcon(ICONS.search)}<input type="search" data-search="hacs" value="${esc(
       this._hacsQuery
-    )}" placeholder="${esc(this._t("search_ext"))}" aria-label="${esc(this._t("search_ext"))}" autocomplete="off" spellcheck="false"></label>`;
+    )}" placeholder="${esc(this._t("search_ext"))}" aria-label="${esc(this._t("search_ext"))}" autocomplete="off" spellcheck="false">${
+      this._hacsQuery
+        ? `<span class="clear" role="button" tabindex="0" data-action="hacs-clear" title="${esc(this._t("clear_search"))}" aria-label="${esc(this._t("clear_search"))}">${svgIcon(ICONS.close)}</span>`
+        : ""
+    }</label>`;
     const rows = shown.map((x) => {
       const ver = x.update ? `${esc(x.installed || "?")} → <b>${esc(x.latest || "?")}</b>` : esc(x.installed || "—");
       const status = x.update

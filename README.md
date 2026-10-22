@@ -159,6 +159,7 @@ language: fr
 | ![mini card](screenshots/mini-card.png) | ![mini card dark](screenshots/mini-card-dark.png) |
 | ![status card](screenshots/status-card.png) | ![status card dark](screenshots/status-card-dark.png) |
 | ![HACS extensions](screenshots/card-hacs.png) | ![Unavailable integrations](screenshots/card-watchdog.png) |
+| ![HACS search (French)](screenshots/card-hacs-search.png) | |
 
 ## How it works
 
@@ -185,7 +186,7 @@ The processes section is hidden while every monitored process runs: the **Proces
 
 ### HACS extensions
 
-HACS creates an update entity for every repository it downloaded. The card lists them with their name and category (from the HACS device), installed and latest version, and the GitHub repository (from the release URL). The list is folded by default: click the **HACS** section, or its tile in the status row, to unfold it. Click a line to open its update dialog (release notes, install), its refresh button to check that extension alone for updates (needs HACS Refresh 0.2.0 or later), or the GitHub button to open the repository. The search field at the top of the unfolded list filters it as you type, by name or GitHub repository (case and accents ignored); Escape clears it, and folding the list clears it too.
+HACS creates an update entity for every repository it downloaded. The card lists them with their name and category (from the HACS device), installed and latest version, and the GitHub repository (from the release URL). The list is folded by default: click the **HACS** section, or its tile in the status row, to unfold it. Click a line to open its update dialog (release notes, install), its refresh button to check that extension alone for updates (needs HACS Refresh 0.2.0 or later), or the GitHub button to open the repository. The search field at the top of the unfolded list filters it as you type, by name or GitHub repository (case and accents ignored); the ✕ button or Escape clears it, and folding the list clears it too.
 
 Logos are loaded dynamically, best source first:
 
