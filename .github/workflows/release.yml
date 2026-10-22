@@ -2,10 +2,16 @@ name: Release
 
 # Publishes a GitHub release whenever main carries a version that has no tag yet:
 # bump "version" in package.json, add its CHANGELOG.md section, push, and the release follows.
+# Run it by hand with "overwrite" to refresh the notes and the file of the current version's release.
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      overwrite:
+        description: "Overwrite the notes and the file of the existing release for this version"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -37,14 +43,14 @@ jobs:
           fi
 
       - name: Check build and notes
-        if: steps.version.outputs.exists == 'false'
+        if: steps.version.outputs.exists == 'false' || inputs.overwrite
         run: |
           npm run check
           .github/scripts/release-notes.sh "${{ steps.version.outputs.version }}" > notes.md
           test -s notes.md
 
       - name: Publish release
-        if: steps.version.outputs.exists == 'false'
+        if: steps.version.outputs.exists == 'false' || inputs.overwrite
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.version.outputs.version }}
