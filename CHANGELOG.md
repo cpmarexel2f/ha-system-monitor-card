@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.17.0
 
 ### Changes
 - Mini card: a zoom button at the far right of the header, as on the status card, switches it to the full System Monitor card (same options) and back. A click anywhere outside the card brings the compact view back, except in a dialog opened from it or while the install confirmation is open. The `zoom` option (on by default, in the visual editor) removes the button.
