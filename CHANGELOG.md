@@ -1,7 +1,6 @@
 # Changelog
 
-## Unreleased
-
+## 1.16.0
 ### Changes
 - The Home Assistant logo in the header fits a 40 × 40 px box on the full card (was 44 px) and a 32 × 32 px box on the mini and status cards (was 40 px), like the header icon of the other cards. Zoomed in, the status card shows the full card's 40 px logo.
 - The status pill ("Up to date", "Update 2026.10.3") sits in the header row, right of the title and before the buttons, instead of on its own line under the title (full card, zoomed-in status card and status card). On the compact status card it reads just "Update" (the new version is in its tooltip, and in full once zoomed in), and the header spacing is a little tighter, so the title and subtitle keep their room at 380 px.
