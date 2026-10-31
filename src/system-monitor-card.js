@@ -606,8 +606,8 @@ const fold = (v) => String(v ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g,
 
 const lang = (hass, config) => {
   const l = (config?.language) || (hass && (hass.locale?.language || hass.language)) || "en";
-  return STRINGS[l] ? l : STRINGS[l.split("-")[0]] ? l.split("-")[0] : "en";
-};
+  return STRINGS[l] ? l : (STRINGS[l.split("-")[0]] ? l.split("-")[0] : "en");
+}
 
 const t = (hass, config, key) => STRINGS[lang(hass, config)][key] ?? STRINGS.en[key] ?? key;
 
